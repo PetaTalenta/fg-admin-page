@@ -1,46 +1,115 @@
+import * as React from "react"
+
+// Local component definitions with types
+const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; [key: string]: any }> = ({ children, variant, asChild, className, ...props }) => {
+  const baseClass = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  const variantClass = variant === 'secondary' ? 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80' : variant === 'outline' ? 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground' : 'bg-primary text-primary-foreground shadow hover:bg-primary/90';
+  const Comp = asChild ? 'a' : 'button';
+  return <Comp className={`${baseClass} ${variantClass} ${className || ''}`} {...props}>{children}</Comp>;
+};
+
+const Card: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`rounded-xl border bg-card text-card-foreground shadow ${className || ''}`} {...props}>{children}</div>;
+const CardHeader: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`flex flex-col space-y-1.5 p-6 ${className || ''}`} {...props}>{children}</div>;
+const CardTitle: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`font-semibold leading-none tracking-tight ${className || ''}`} {...props}>{children}</div>;
+const CardDescription: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`text-sm text-muted-foreground ${className || ''}`} {...props}>{children}</div>;
+const CardContent: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`p-6 pt-0 ${className || ''}`} {...props}>{children}</div>;
+
+const Badge: React.FC<{ children: React.ReactNode; variant?: string; className?: string; [key: string]: any }> = ({ children, variant, className, ...props }) => {
+  const variantClass = variant === 'secondary' ? 'bg-secondary text-secondary-foreground' : variant === 'outline' ? 'border border-input bg-background' : 'bg-primary text-primary-foreground';
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${variantClass} ${className || ''}`} {...props}>{children}</span>;
+};
+
+const Avatar: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full ${className || ''}`} {...props}>{children}</div>;
+const AvatarImage: React.FC<{ src: string; alt: string; className?: string; [key: string]: any }> = ({ src, alt, className, ...props }) => <img className={`aspect-square h-full w-full ${className || ''}`} src={src} alt={alt} {...props} />;
+const AvatarFallback: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`flex h-full w-full items-center justify-center rounded-full bg-muted ${className || ''}`} {...props}>{children}</div>;
+
+const Separator: React.FC<{ className?: string; [key: string]: any }> = ({ className, ...props }) => <hr className={`shrink-0 bg-border h-[1px] w-full ${className || ''}`} {...props} />;
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">
-          Welcome to Next.js!
-        </h1>
-        <p className="text-lg text-center mb-8 text-gray-600">
-          Get started by editing <code>app/page.tsx</code>
-        </p>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">
+            Welcome to Next.js with shadcn/ui!
+          </h1>
+          <p className="text-lg text-muted-foreground mb-4">
+            Get started by editing <code className="bg-muted px-2 py-1 rounded">app/page.tsx</code>
+          </p>
+          <div className="flex justify-center gap-2">
+            <Badge variant="secondary">Next.js 14</Badge>
+            <Badge variant="secondary">TypeScript</Badge>
+            <Badge variant="secondary">Tailwind CSS</Badge>
+            <Badge variant="default">shadcn/ui</Badge>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <h3 className="text-xl font-semibold mb-2">Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Documentation</CardTitle>
+              <CardDescription>
+                Find in-depth information about Next.js features and API.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <a href="https://nextjs.org/docs">Learn More →</a>
+              </Button>
+            </CardContent>
+          </Card>
 
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <h3 className="text-xl font-semibold mb-2">Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          <Card>
+            <CardHeader>
+              <CardTitle>Learn</CardTitle>
+              <CardDescription>
+                Learn about Next.js in an interactive course with quizzes!
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="secondary" className="w-full">
+                <a href="https://nextjs.org/learn">Start Learning →</a>
+              </Button>
+            </CardContent>
+          </Card>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <h3 className="text-xl font-semibold mb-2">Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+          <Card>
+            <CardHeader>
+              <CardTitle>Examples</CardTitle>
+              <CardDescription>
+                Discover and deploy boilerplate example Next.js projects.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" className="w-full">
+                <a href="https://github.com/vercel/next.js/tree/canary/examples">View Examples →</a>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
-          <a
-            href="https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme"
-            className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <h3 className="text-xl font-semibold mb-2">Deploy &rarr;</h3>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
+        <Separator className="my-8" />
+
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold mb-4">Meet the Team</h2>
+          <div className="flex justify-center gap-4">
+            <div className="text-center">
+              <Avatar className="mx-auto mb-2">
+                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <p className="font-medium">John Doe</p>
+              <Badge variant="outline">Developer</Badge>
+            </div>
+            <div className="text-center">
+              <Avatar className="mx-auto mb-2">
+                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                <AvatarFallback>JS</AvatarFallback>
+              </Avatar>
+              <p className="font-medium">Jane Smith</p>
+              <Badge variant="outline">Designer</Badge>
+            </div>
+          </div>
         </div>
       </main>
     </div>

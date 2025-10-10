@@ -1,25 +1,28 @@
-# Next.js Starter - AI Agent Instructions
+# Next.js Starter - Instruksi Agen AI
 
-## Architecture Overview
-- **Framework**: Next.js 14 with App Router (not Pages Router)
-- **Language**: TypeScript with strict mode enabled
-- **Styling**: Tailwind CSS with CSS custom properties for theming
-- **Build Tool**: Turbopack for development, standard Next.js build for production
+## Gambaran Arsitektur
+- **Framework**: Next.js 14 dengan App Router (bukan Pages Router)
+- **Bahasa**: TypeScript dengan mode strict diaktifkan
+- **Styling**: Tailwind CSS dengan properti CSS kustom untuk tema
+- **Build Tool**: Turbopack untuk development, build standar Next.js untuk production
 
-## Path Aliases (Critical)
-Always use these aliases for imports - they're configured in both `tsconfig.json` and `next.config.js`:
+## Alias Path (Kritis)
+Selalu gunakan alias ini untuk import - mereka dikonfigurasi di `tsconfig.json` dan `next.config.js`:
 
 ```typescript
-import Component from '@/components/Component'  // ./src/components/
 import { util } from '@/lib/utils'              // ./src/lib/
 import styles from '@/styles/globals.css'       // ./src/styles/
 import type User from '@/types/user'            // ./src/types/
 import { hook } from '@/hooks/useHook'          // ./src/hooks/
 ```
 
+## Pola Styling
+- Gunakan kelas utilitas Tailwind terutama
+- Variabel CSS kustom didefinisikan di `:root` untuk warna tema
+- Dukungan dark mode melalui media query `prefers-color-scheme`
+- Properti CSS kustom: `--background`, `--foreground`
 
-## Styling Patterns
-- Use Tailwind utility classes primarily
-- Custom CSS variables defined in `:root` for theme colors
-- Dark mode support via `prefers-color-scheme` media query
-- CSS custom properties: `--background`, `--foreground`
+## Arsitektur Komponen
+- **Komponen Page**: Tidak suka modularisasi komponen untuk suatu page. Semua komponen yang dibutuhkan oleh suatu page harus didefinisikan langsung di dalam file page tersebut, bukan diimpor dari folder components.
+- **Modul Global**: Untuk utils, service, hooks, store, dan modul lainnya, tetap gunakan yang global dan diimpor dari folder yang sesuai (misalnya `@/lib/utils`, `@/hooks/useHook`).
+

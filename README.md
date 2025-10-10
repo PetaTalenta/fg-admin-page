@@ -8,7 +8,6 @@ Template Next.js sederhana dengan TypeScript dan Tailwind CSS.
 nextjs-template/
 ├── src/
 │   ├── app/           # Halaman Next.js dengan App Router
-│   ├── components/    # Komponen React yang dapat digunakan kembali
 │   ├── styles/        # File CSS global
 │   ├── lib/           # Utilitas dan helper functions
 │   ├── hooks/         # Custom React hooks
@@ -25,7 +24,7 @@ nextjs-template/
 - ✅ Turbopack untuk development
 - ✅ Custom path aliases
 - ✅ ESLint configuration
-- ✅ Komponen siap pakai
+- ✅ Arsitektur komponen page yang tidak modular
 - ✅ Custom hooks
 - ✅ Type definitions
 
@@ -57,7 +56,6 @@ import type { User } from '@/types'
 Available aliases:
 - `@/*` → `./src/*`
 - `@/app/*` → `./src/app/*`
-- `@/components/*` → `./src/components/*`
 - `@/lib/*` → `./src/lib/*`
 - `@/utils/*` → `./src/utils/*`
 - `@/hooks/*` → `./src/hooks/*`
@@ -68,3 +66,8 @@ Available aliases:
 ## Customization
 
 Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda. Hapus komponen yang tidak diperlukan dan tambahkan sesuai requirements.
+
+## Arsitektur Komponen
+
+- **Komponen Page**: Semua komponen yang dibutuhkan oleh suatu page harus didefinisikan langsung di dalam file page tersebut, bukan diimpor dari folder components.
+- **Modul Global**: Untuk utils, service, hooks, store, dan modul lainnya, tetap gunakan yang global dan diimpor dari folder yang sesuai (misalnya `@/lib/utils`, `@/hooks/useHook`).
