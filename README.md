@@ -1,6 +1,6 @@
 # Next.js Starter Template
 
-Template Next.js modern dengan TypeScript, Tailwind CSS, dan shadcn/ui components.
+Template Next.js modern dengan TypeScript dan Tailwind CSS.
 
 ## Struktur Folder
 
@@ -15,8 +15,6 @@ nextjs-starter/
 │   ├── hooks/         # Custom React hooks (opsional)
 │   └── types/         # TypeScript type definitions (opsional)
 ├── public/            # Asset statis
-│   └── docs/          # Dokumentasi tambahan
-├── components.json    # Konfigurasi shadcn/ui
 ├── tailwind.config.js # Konfigurasi Tailwind CSS
 ├── next.config.js     # Konfigurasi Next.js
 ├── eslint.config.mjs  # Konfigurasi ESLint
@@ -27,8 +25,7 @@ nextjs-starter/
 
 - ✅ Next.js 15 dengan App Router
 - ✅ TypeScript dengan mode strict
-- ✅ Tailwind CSS dengan shadcn/ui components
-- ✅ Radix UI primitives untuk komponen aksesibel
+- ✅ Tailwind CSS
 - ✅ Turbopack untuk development yang cepat
 - ✅ Custom path aliases
 - ✅ ESLint dengan konfigurasi optimal
@@ -41,8 +38,6 @@ nextjs-starter/
 - **Framework**: Next.js 15.5.5
 - **Bahasa**: TypeScript 5
 - **Styling**: Tailwind CSS 3.4.6
-- **UI Components**: shadcn/ui (style: new-york)
-- **Icons**: Lucide React
 - **Linting**: ESLint 9
 - **Build Tool**: Turbopack (dev), Next.js build (prod)
 
@@ -91,21 +86,6 @@ Available aliases:
 - `@/styles/*` → `./src/styles/*`
 - `@/public/*` → `./public/*`
 
-## shadcn/ui Components
-
-Template ini sudah terintegrasi dengan shadcn/ui. Untuk menambah komponen baru:
-
-```bash
-npx shadcn@latest add [component-name]
-```
-
-Komponen yang sudah tersedia di `src/app/page.tsx`:
-- Button
-- Card (Card, CardHeader, CardTitle, CardDescription, CardContent)
-- Badge
-- Avatar (Avatar, AvatarImage, AvatarFallback)
-- Separator
-
 ## Customization
 
 Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda:
@@ -120,7 +100,7 @@ Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda:
 
 ## Dokumentasi Tambahan
 
-Lihat `public/docs/app-files-explanation.md` untuk penjelasan detail tentang file `layout.tsx` dan `page.tsx` di App Router.
+Lihat file-file di src/ untuk contoh implementasi.
 
 ## Lisensi
 

@@ -1,9 +1,9 @@
 # Next.js Starter - Instruksi Agen AI
 
 ## Gambaran Arsitektur
-- **Framework**: Next.js 14 dengan App Router (bukan Pages Router)
+- **Framework**: Next.js 15 dengan App Router (bukan Pages Router)
 - **Bahasa**: TypeScript dengan mode strict diaktifkan
-- **Styling**: Tailwind CSS dengan properti CSS kustom untuk tema dan components Shadcn UI
+- **Styling**: Tailwind CSS dengan properti CSS kustom untuk tema
 - **Linting**: ESLint dengan konfigurasi standar Next.js dan beberapa aturan khusus
 - **Build Tool**: Turbopack untuk development, build standar Next.js untuk production
 
