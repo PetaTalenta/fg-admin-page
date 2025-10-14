@@ -69,8 +69,10 @@ export interface ModelUsage {
 export interface ModelStats {
   summary: {
     totalModels: number;
-    freeModels: number;
-    paidModels: number;
+    totalUsage: number;
+    freeModelUsage: number;
+    freeModelPercentage: string;
+    paidModelUsage: number;
   };
   models: ModelUsage[];
 }

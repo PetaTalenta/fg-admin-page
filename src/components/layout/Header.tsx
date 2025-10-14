@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth-context';
 
 interface HeaderProps {
   onMenuClick: () => void;

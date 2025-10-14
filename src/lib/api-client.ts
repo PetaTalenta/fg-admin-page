@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { API_BASE_URL, TOKEN_KEY } from './constants';
+import { getCookie } from './utils';
 import type { ApiError } from '@/types/api';
 
 // Create axios instance
@@ -14,9 +15,12 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor - Add auth token to requests
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get token from localStorage
+    // Get token from cookie first, then localStorage as fallback
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem(TOKEN_KEY);
+      let token = getCookie(TOKEN_KEY);
+      if (!token) {
+        token = localStorage.getItem(TOKEN_KEY);
+      }
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -39,11 +43,18 @@ apiClient.interceptors.response.use(
       // Server responded with error status
       const { status, data } = error.response;
       
-      // Handle 401 Unauthorized - redirect to login
+      // Handle 401 Unauthorized - redirect to login only if not already on login page
       if (status === 401) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem(TOKEN_KEY);
-          window.location.href = '/login';
+          // Don't redirect if already on login page or if this is an auth endpoint
+          const currentPath = window.location.pathname;
+          const isOnLoginPage = currentPath === '/login';
+          const isAuthEndpoint = error.config?.url?.includes('/auth/');
+
+          if (!isOnLoginPage && !isAuthEndpoint) {
+            localStorage.removeItem(TOKEN_KEY);
+            window.location.href = '/login';
+          }
         }
       }
       
@@ -73,16 +84,16 @@ apiClient.interceptors.response.use(
 
 // Helper functions for common HTTP methods
 export const api = {
-  get: <T>(url: string, params?: any) => 
+  get: <T>(url: string, params?: Record<string, unknown>) => 
     apiClient.get<T>(url, { params }).then(res => res.data),
   
-  post: <T>(url: string, data?: any) => 
+  post: <T>(url: string, data?: unknown) => 
     apiClient.post<T>(url, data).then(res => res.data),
   
-  put: <T>(url: string, data?: any) => 
+  put: <T>(url: string, data?: unknown) => 
     apiClient.put<T>(url, data).then(res => res.data),
   
-  patch: <T>(url: string, data?: any) => 
+  patch: <T>(url: string, data?: unknown) => 
     apiClient.patch<T>(url, data).then(res => res.data),
   
   delete: <T>(url: string) => 

@@ -882,7 +882,7 @@ Get complete analysis results for a specific job.
 
 Connect to WebSocket server for real-time job monitoring.
 
-**Endpoint**: `ws://admin-service:3007/admin/socket.io` (or via API Gateway)
+**Endpoint**: `ws://api.futureguide.id/api/admin/socket.io` (or via API Gateway)
 
 **Authentication**: Required via handshake
 
@@ -890,7 +890,7 @@ Connect to WebSocket server for real-time job monitoring.
 ```javascript
 const io = require('socket.io-client');
 
-const socket = io('http://localhost:3007', {
+const socket = io('http://api.futureguide.id/api', {
   path: '/admin/socket.io',
   auth: {
     token: 'YOUR_JWT_TOKEN'

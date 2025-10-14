@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth-context';
 import { isValidEmail } from '@/lib/utils';
 
 export default function LoginForm() {

@@ -6,8 +6,8 @@ import type { SystemMetrics, DashboardStats } from '@/types/api';
 
 // Fetch job statistics
 const fetchJobStats = async (): Promise<JobStats> => {
-  const response = await api.get<{ success: boolean; data: { overview: JobStats } }>('/admin/jobs/stats');
-  return response.data.overview;
+  const response = await api.get<{ success: boolean; data: JobStats }>('/admin/jobs/stats');
+  return response.data;
 };
 
 // Fetch system metrics (includes user stats and token stats)
@@ -62,7 +62,7 @@ export const useDashboardStats = () => {
             total: jobStatsQuery.data.total,
             completed: jobStatsQuery.data.completed,
             failed: jobStatsQuery.data.failed,
-            successRate: jobStatsQuery.data.successRate,
+            successRate: jobStatsQuery.data.successRate ?? (jobStatsQuery.data.total > 0 ? (jobStatsQuery.data.completed / jobStatsQuery.data.total) * 100 : 0),
           },
           userStats: {
             totalUsers: parseInt(systemMetricsQuery.data.users.total_users),

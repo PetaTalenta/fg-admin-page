@@ -1,4 +1,5 @@
 import { User } from './user';
+import { ApiResponse } from './api';
 
 // Authentication Types
 export interface LoginCredentials {
@@ -6,10 +7,12 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface LoginResponse {
+export interface LoginData {
   user: User;
   token: string;
 }
+
+export type LoginResponse = ApiResponse<LoginData>;
 
 export interface AuthUser {
   id: string;
@@ -17,9 +20,5 @@ export interface AuthUser {
   user_type: 'user' | 'admin' | 'superadmin';
 }
 
-export interface VerifyTokenResponse {
-  id: string;
-  email: string;
-  user_type: string;
-}
+export type VerifyTokenResponse = ApiResponse<AuthUser>;
 

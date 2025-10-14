@@ -87,7 +87,7 @@ export default function DashboardPage() {
         {/* Success Rate */}
         <StatsCard
           title="Success Rate"
-          value={stats ? `${stats.jobStats.successRate.toFixed(1)}%` : '-'}
+          value={stats ? `${(stats.jobStats.successRate ?? (stats.jobStats.total > 0 ? (stats.jobStats.completed / stats.jobStats.total) * 100 : 0)).toFixed(1)}%` : '-'}
           icon={
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />

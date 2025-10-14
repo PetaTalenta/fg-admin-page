@@ -1,13 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import type { Job } from '@/types/job';
-import type { User } from '@/types/user';
+import type { JobWithUser } from '@/types/job';
 import { formatDate } from '@/lib/utils';
-
-interface JobWithUser extends Job {
-  user?: User;
-}
 
 interface RecentJobsTableProps {
   jobs: JobWithUser[];

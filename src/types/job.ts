@@ -1,4 +1,6 @@
 // Job Types
+import type { User } from '@/types/user';
+
 export type JobStatus = 'queued' | 'processing' | 'completed' | 'failed' | 'cancelled';
 export type JobPriority = 'low' | 'normal' | 'high';
 
@@ -16,11 +18,7 @@ export interface Job {
 }
 
 export interface JobWithUser extends Job {
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-  };
+  user?: User;
 }
 
 export interface JobStats {
@@ -30,16 +28,16 @@ export interface JobStats {
   completed: number;
   failed: number;
   cancelled: number;
-  successRate: number;
+  successRate?: number;
   avgProcessingTimeMinutes: number;
 }
 
 export interface JobResult {
   id: string;
   job_id: string;
-  test_data: any;
-  test_result: any;
-  raw_responses: any;
+  test_data: Record<string, unknown>;
+  test_result: Record<string, unknown>;
+  raw_responses: Record<string, unknown>;
   created_at: string;
 }
 
