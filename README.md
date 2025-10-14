@@ -1,38 +1,65 @@
-# Next.js Template
+# Next.js Starter Template
 
-Template Next.js sederhana dengan TypeScript dan Tailwind CSS.
+Template Next.js modern dengan TypeScript, Tailwind CSS, dan shadcn/ui components.
 
 ## Struktur Folder
 
 ```
-nextjs-template/
+nextjs-starter/
 ├── src/
 │   ├── app/           # Halaman Next.js dengan App Router
+│   │   ├── layout.tsx # Root layout
+│   │   └── page.tsx   # Halaman utama
 │   ├── styles/        # File CSS global
 │   ├── lib/           # Utilitas dan helper functions
-│   ├── hooks/         # Custom React hooks
-│   └── types/         # TypeScript type definitions
+│   ├── hooks/         # Custom React hooks (opsional)
+│   └── types/         # TypeScript type definitions (opsional)
 ├── public/            # Asset statis
-└── docs/              # Dokumentasi
+│   └── docs/          # Dokumentasi tambahan
+├── components.json    # Konfigurasi shadcn/ui
+├── tailwind.config.js # Konfigurasi Tailwind CSS
+├── next.config.js     # Konfigurasi Next.js
+├── eslint.config.mjs  # Konfigurasi ESLint
+└── tsconfig.json      # Konfigurasi TypeScript
 ```
 
 ## Fitur
 
-- ✅ Next.js 14 dengan App Router
-- ✅ TypeScript
-- ✅ Tailwind CSS
-- ✅ Turbopack untuk development
+- ✅ Next.js 15 dengan App Router
+- ✅ TypeScript dengan mode strict
+- ✅ Tailwind CSS dengan shadcn/ui components
+- ✅ Radix UI primitives untuk komponen aksesibel
+- ✅ Turbopack untuk development yang cepat
 - ✅ Custom path aliases
-- ✅ ESLint configuration
+- ✅ ESLint dengan konfigurasi optimal
 - ✅ Arsitektur komponen page yang tidak modular
-- ✅ Custom hooks
-- ✅ Type definitions
+- ✅ Utility functions dengan clsx dan tailwind-merge
+- ✅ Type definitions lengkap
+
+## Teknologi Utama
+
+- **Framework**: Next.js 15.5.5
+- **Bahasa**: TypeScript 5
+- **Styling**: Tailwind CSS 3.4.6
+- **UI Components**: shadcn/ui (style: new-york)
+- **Icons**: Lucide React
+- **Linting**: ESLint 9
+- **Build Tool**: Turbopack (dev), Next.js build (prod)
 
 ## Quick Start
 
 ```bash
+# Clone repository
+git clone <repository-url>
+cd nextjs-starter
+
+# Install dependencies
 npm install
+
+# Jalankan development server
 npm run dev
+
+# Buka http://localhost:3000 di browser
 ```
 
 ## Scripts
@@ -48,9 +75,10 @@ npm run dev
 Template ini menggunakan path aliases untuk import yang lebih bersih:
 
 ```typescript
-import Button from '@/components/Button'
 import { cn } from '@/lib/utils'
 import type { User } from '@/types'
+import styles from '@/styles/globals.css'
+import { useCustomHook } from '@/hooks/useCustomHook'
 ```
 
 Available aliases:
@@ -63,11 +91,37 @@ Available aliases:
 - `@/styles/*` → `./src/styles/*`
 - `@/public/*` → `./public/*`
 
+## shadcn/ui Components
+
+Template ini sudah terintegrasi dengan shadcn/ui. Untuk menambah komponen baru:
+
+```bash
+npx shadcn@latest add [component-name]
+```
+
+Komponen yang sudah tersedia di `src/app/page.tsx`:
+- Button
+- Card (Card, CardHeader, CardTitle, CardDescription, CardContent)
+- Badge
+- Avatar (Avatar, AvatarImage, AvatarFallback)
+- Separator
+
 ## Customization
 
-Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda. Hapus komponen yang tidak diperlukan dan tambahkan sesuai requirements.
+Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda:
 
-## Arsitektur Komponen
+1. **Komponen Page**: Semua komponen yang dibutuhkan oleh suatu page harus didefinisikan langsung di dalam file page tersebut, bukan diimpor dari folder components.
 
-- **Komponen Page**: Semua komponen yang dibutuhkan oleh suatu page harus didefinisikan langsung di dalam file page tersebut, bukan diimpor dari folder components.
-- **Modul Global**: Untuk utils, service, hooks, store, dan modul lainnya, tetap gunakan yang global dan diimpor dari folder yang sesuai (misalnya `@/lib/utils`, `@/hooks/useHook`).
+2. **Modul Global**: Untuk utils, service, hooks, store, dan modul lainnya, tetap gunakan yang global dan diimpor dari folder yang sesuai (misalnya `@/lib/utils`, `@/hooks/useHook`).
+
+3. **Styling**: Gunakan Tailwind CSS classes terutama. Variabel CSS kustom sudah didefinisikan di `:root` untuk tema.
+
+4. **Dark Mode**: Mendukung dark mode melalui `prefers-color-scheme` media query.
+
+## Dokumentasi Tambahan
+
+Lihat `public/docs/app-files-explanation.md` untuk penjelasan detail tentang file `layout.tsx` dan `page.tsx` di App Router.
+
+## Lisensi
+
+Template ini dibuat untuk keperluan development dan dapat dimodifikasi sesuai kebutuhan.

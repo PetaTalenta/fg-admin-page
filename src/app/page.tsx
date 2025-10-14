@@ -1,29 +1,30 @@
 import * as React from "react"
+import Image from "next/image"
 
 // Local component definitions with types
-const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; [key: string]: any }> = ({ children, variant, asChild, className, ...props }) => {
+const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; } & React.HTMLAttributes<HTMLElement>> = ({ children, variant, asChild, className, ...props }) => {
   const baseClass = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
   const variantClass = variant === 'secondary' ? 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80' : variant === 'outline' ? 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground' : 'bg-primary text-primary-foreground shadow hover:bg-primary/90';
   const Comp = asChild ? 'a' : 'button';
   return <Comp className={`${baseClass} ${variantClass} ${className || ''}`} {...props}>{children}</Comp>;
 };
 
-const Card: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`rounded-xl border bg-card text-card-foreground shadow ${className || ''}`} {...props}>{children}</div>;
-const CardHeader: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`flex flex-col space-y-1.5 p-6 ${className || ''}`} {...props}>{children}</div>;
-const CardTitle: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`font-semibold leading-none tracking-tight ${className || ''}`} {...props}>{children}</div>;
-const CardDescription: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`text-sm text-muted-foreground ${className || ''}`} {...props}>{children}</div>;
-const CardContent: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`p-6 pt-0 ${className || ''}`} {...props}>{children}</div>;
+const Card: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`rounded-xl border bg-card text-card-foreground shadow ${className || ''}`} {...props}>{children}</div>;
+const CardHeader: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`flex flex-col space-y-1.5 p-6 ${className || ''}`} {...props}>{children}</div>;
+const CardTitle: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`font-semibold leading-none tracking-tight ${className || ''}`} {...props}>{children}</div>;
+const CardDescription: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`text-sm text-muted-foreground ${className || ''}`} {...props}>{children}</div>;
+const CardContent: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`p-6 pt-0 ${className || ''}`} {...props}>{children}</div>;
 
-const Badge: React.FC<{ children: React.ReactNode; variant?: string; className?: string; [key: string]: any }> = ({ children, variant, className, ...props }) => {
+const Badge: React.FC<{ children: React.ReactNode; variant?: string; className?: string; } & React.HTMLAttributes<HTMLSpanElement>> = ({ children, variant, className, ...props }) => {
   const variantClass = variant === 'secondary' ? 'bg-secondary text-secondary-foreground' : variant === 'outline' ? 'border border-input bg-background' : 'bg-primary text-primary-foreground';
   return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${variantClass} ${className || ''}`} {...props}>{children}</span>;
 };
 
-const Avatar: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full ${className || ''}`} {...props}>{children}</div>;
-const AvatarImage: React.FC<{ src: string; alt: string; className?: string; [key: string]: any }> = ({ src, alt, className, ...props }) => <img className={`aspect-square h-full w-full ${className || ''}`} src={src} alt={alt} {...props} />;
-const AvatarFallback: React.FC<{ children: React.ReactNode; className?: string; [key: string]: any }> = ({ children, className, ...props }) => <div className={`flex h-full w-full items-center justify-center rounded-full bg-muted ${className || ''}`} {...props}>{children}</div>;
+const Avatar: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full ${className || ''}`} {...props}>{children}</div>;
+const AvatarImage: React.FC<{ src: string; alt: string; className?: string; } & React.HTMLAttributes<HTMLImageElement>> = ({ src, alt, className, ...props }) => <Image className={`aspect-square h-full w-full ${className || ''}`} src={src} alt={alt} width={40} height={40} {...props} />;
+const AvatarFallback: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`flex h-full w-full items-center justify-center rounded-full bg-muted ${className || ''}`} {...props}>{children}</div>;
 
-const Separator: React.FC<{ className?: string; [key: string]: any }> = ({ className, ...props }) => <hr className={`shrink-0 bg-border h-[1px] w-full ${className || ''}`} {...props} />;
+const Separator: React.FC<{ className?: string; } & React.HTMLAttributes<HTMLHRElement>> = ({ className, ...props }) => <hr className={`shrink-0 bg-border h-[1px] w-full ${className || ''}`} {...props} />;
 
 export default function Home() {
   return (
