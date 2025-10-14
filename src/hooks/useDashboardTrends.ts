@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
-import type { User } from '@/types/user';
 import type { ModelStats } from '@/types/chatbot';
 import type { JobTrendData, UserGrowthData, JobsApiResponse, UsersApiResponse, ModelsApiResponse } from '@/types/api';
 
@@ -134,28 +133,7 @@ const fetchRecentJobs = async () => {
     }
   );
 
-  // Fetch user details for each job
-  const jobsWithUsers = await Promise.all(
-    response.data.jobs.map(async (job) => {
-      try {
-        const userResponse = await api.get<{ success: boolean; data: User }>(
-          `/admin/users/${job.user_id}`
-        );
-        return {
-          ...job,
-          user: userResponse.data,
-        };
-      } catch {
-        // If user fetch fails, return job without user info
-        return {
-          ...job,
-          user: undefined,
-        };
-      }
-    })
-  );
-
-  return jobsWithUsers;
+  return response.data.jobs;
 };
 
 // Hook for job trend data

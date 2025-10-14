@@ -20,7 +20,7 @@ export interface PaginatedResponse<T> {
 
 // API-specific response types for admin endpoints
 export interface JobsApiResponse {
-  jobs: import('./job').Job[];
+  jobs: import('./job').JobWithUser[];
   pagination: PaginationMeta;
 }
 

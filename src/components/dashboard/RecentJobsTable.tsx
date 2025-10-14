@@ -60,7 +60,10 @@ export default function RecentJobsTable({ jobs, isLoading = false }: RecentJobsT
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
+                Username
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Job ID
@@ -88,10 +91,17 @@ export default function RecentJobsTable({ jobs, isLoading = false }: RecentJobsT
                       href={`/users/${job.user_id}`}
                       className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                     >
-                      {job.user.email}
+                      {job.user.username}
                     </Link>
                   ) : (
                     <span className="text-sm text-gray-500">Unknown</span>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {job.user ? (
+                    <span className="text-sm text-gray-900">{job.user.email}</span>
+                  ) : (
+                    <span className="text-sm text-gray-500">-</span>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
