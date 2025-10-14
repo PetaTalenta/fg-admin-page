@@ -3,7 +3,8 @@
 ## Gambaran Arsitektur
 - **Framework**: Next.js 14 dengan App Router (bukan Pages Router)
 - **Bahasa**: TypeScript dengan mode strict diaktifkan
-- **Styling**: Tailwind CSS dengan properti CSS kustom untuk tema
+- **Styling**: Tailwind CSS dengan properti CSS kustom untuk tema dan components Shadcn UI
+- **Linting**: ESLint dengan konfigurasi standar Next.js dan beberapa aturan khusus
 - **Build Tool**: Turbopack untuk development, build standar Next.js untuk production
 
 ## Alias Path (Kritis)
