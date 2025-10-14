@@ -5,8 +5,13 @@ import Image from "next/image"
 const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; } & React.HTMLAttributes<HTMLElement>> = ({ children, variant, asChild, className, ...props }) => {
   const baseClass = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
   const variantClass = variant === 'secondary' ? 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80' : variant === 'outline' ? 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground' : 'bg-primary text-primary-foreground shadow hover:bg-primary/90';
-  const Comp = asChild ? 'a' : 'button';
-  return <Comp className={`${baseClass} ${variantClass} ${className || ''}`} {...props}>{children}</Comp>;
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      className: `${baseClass} ${variantClass} ${className || ''} ${children.props.className || ''}`,
+      ...props
+    });
+  }
+  return <button className={`${baseClass} ${variantClass} ${className || ''}`} {...props}>{children}</button>;
 };
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; } & React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => <div className={`rounded-xl border bg-card text-card-foreground shadow ${className || ''}`} {...props}>{children}</div>;
