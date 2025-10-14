@@ -6,8 +6,8 @@ import type { SystemMetrics, DashboardStats } from '@/types/api';
 
 // Fetch job statistics
 const fetchJobStats = async (): Promise<JobStats> => {
-  const response = await api.get<{ success: boolean; data: JobStats }>('/admin/jobs/stats');
-  return response.data;
+  const response = await api.get<{ success: boolean; data: { overview: JobStats } }>('/admin/jobs/stats');
+  return response.data.overview;
 };
 
 // Fetch system metrics (includes user stats and token stats)
