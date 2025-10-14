@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
-import type { Job } from '@/types/job';
 import type { User } from '@/types/user';
-import type { ModelStats, ModelUsage } from '@/types/chatbot';
-import type { JobTrendData, UserGrowthData, PaginatedResponse } from '@/types/api';
+import type { ModelStats } from '@/types/chatbot';
+import type { JobTrendData, UserGrowthData, JobsApiResponse, UsersApiResponse, ModelsApiResponse } from '@/types/api';
 
 // Calculate date range for trends (last 7 days)
 const getLast7Days = () => {
@@ -23,7 +22,7 @@ const fetchJobsForTrend = async (): Promise<JobTrendData[]> => {
   const dateTo = dates[dates.length - 1];
 
   // Use API date filtering instead of client-side filtering
-  const response = await api.get<{ success: boolean; data: { jobs: Job[]; pagination: any } }>(
+  const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
     '/admin/jobs',
     {
       date_from: dateFrom,
@@ -70,7 +69,7 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
   const dateTo = dates[dates.length - 1];
 
   // Use API date filtering instead of client-side filtering
-  const response = await api.get<{ success: boolean; data: { users: User[]; pagination: any } }>(
+  const response = await api.get<{ success: boolean; data: UsersApiResponse }>(
     '/admin/users',
     {
       date_from: dateFrom,
@@ -103,7 +102,7 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
 
 // Fetch top models
 const fetchTopModels = async (): Promise<ModelStats> => {
-  const response = await api.get<{ success: boolean; data: { models: ModelUsage[] } }>('/admin/chatbot/models');
+  const response = await api.get<{ success: boolean; data: ModelsApiResponse }>('/admin/chatbot/models');
   
   const models = response.data.models;
   const totalUsage = models.reduce((sum, model) => sum + model.usageCount, 0);
@@ -125,7 +124,7 @@ const fetchTopModels = async (): Promise<ModelStats> => {
 
 // Fetch recent jobs with user info
 const fetchRecentJobs = async () => {
-  const response = await api.get<{ success: boolean; data: { jobs: Job[]; pagination: any } }>(
+  const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
     '/admin/jobs',
     {
       page: 1,
@@ -146,7 +145,7 @@ const fetchRecentJobs = async () => {
           ...job,
           user: userResponse.data,
         };
-      } catch (error) {
+      } catch {
         // If user fetch fails, return job without user info
         return {
           ...job,

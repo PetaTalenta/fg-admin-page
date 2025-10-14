@@ -32,7 +32,7 @@ export default function LoginForm() {
 
     try {
       await login({ email, password });
-    } catch (err) {
+    } catch {
       // Error is handled by useAuth hook
     }
   };

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { API_ENDPOINTS, TOKEN_KEY, USER_KEY, ROUTES } from '@/lib/constants';
 import { getFromStorage, setToStorage, removeFromStorage, setCookie, removeCookie } from '@/lib/utils';
-import type { LoginCredentials, LoginResponse, AuthUser, VerifyTokenResponse } from '@/types/auth';
+import type { LoginCredentials, LoginResponse, AuthUser } from '@/types/auth';
 import type { ApiError } from '@/types/api';
 
 interface AuthContextType {
@@ -52,39 +52,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Error loading auth state:', error);
       setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const verifyToken = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const token = getFromStorage<string | null>(TOKEN_KEY, null);
-
-      if (!token) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-
-      // Verify token with backend
-      const response = await api.get<VerifyTokenResponse>(API_ENDPOINTS.AUTH_VERIFY);
-
-      if (!response.data) {
-        throw new Error('Invalid response format');
-      }
-
-      setUser(response.data);
-      setToStorage(USER_KEY, response.data);
-      setError(null);
-    } catch (err) {
-      // Token invalid or expired - clear all auth data
-      removeFromStorage(TOKEN_KEY);
-      removeCookie(TOKEN_KEY);
-      removeFromStorage(USER_KEY);
-      setUser(null);
-      setError(null); // Don't show error for expired token
     } finally {
       setIsLoading(false);
     }

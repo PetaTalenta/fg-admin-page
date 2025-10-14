@@ -18,6 +18,21 @@ export interface PaginatedResponse<T> {
   pagination: PaginationMeta;
 }
 
+// API-specific response types for admin endpoints
+export interface JobsApiResponse {
+  jobs: import('./job').Job[];
+  pagination: PaginationMeta;
+}
+
+export interface UsersApiResponse {
+  users: import('./user').User[];
+  pagination: PaginationMeta;
+}
+
+export interface ModelsApiResponse {
+  models: import('./chatbot').ModelUsage[];
+}
+
 // Error Response
 export interface ApiError {
   error: string;
