@@ -20,45 +20,56 @@ const fetchJobsForTrend = async (): Promise<JobTrendData[]> => {
   const dateFrom = dates[0];
   const dateTo = dates[dates.length - 1];
 
-  // Use API date filtering instead of client-side filtering
-  const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
-    '/admin/jobs',
-    {
-      date_from: dateFrom,
-      date_to: dateTo,
-      limit: 1000, // Get all jobs in date range
-      sort_by: 'created_at',
-      sort_order: 'ASC', // Get chronological order
-    }
-  );
-
-  const jobs = response.data.jobs;
-
-  // Aggregate jobs by date
-  const jobsByDate: Record<string, { count: number; completed: number; failed: number }> = {};
-  
-  dates.forEach(date => {
-    jobsByDate[date] = { count: 0, completed: 0, failed: 0 };
-  });
-
-  jobs.forEach(job => {
-    const jobDate = job.created_at.split('T')[0];
-    if (jobsByDate[jobDate]) {
-      jobsByDate[jobDate].count++;
-      if (job.status === 'completed') {
-        jobsByDate[jobDate].completed++;
-      } else if (job.status === 'failed') {
-        jobsByDate[jobDate].failed++;
+  try {
+    // Use API date filtering instead of client-side filtering
+    const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
+      '/admin/jobs',
+      {
+        date_from: dateFrom,
+        date_to: dateTo,
+        limit: 100, // Get all jobs in date range, max 100 per page
+        sort_by: 'created_at',
+        sort_order: 'ASC', // Get chronological order
       }
-    }
-  });
+    );
 
-  return dates.map(date => ({
-    date,
-    count: jobsByDate[date].count,
-    completed: jobsByDate[date].completed,
-    failed: jobsByDate[date].failed,
-  }));
+    const jobs = response.data.jobs;
+
+    // Aggregate jobs by date
+    const jobsByDate: Record<string, { count: number; completed: number; failed: number }> = {};
+    
+    dates.forEach(date => {
+      jobsByDate[date] = { count: 0, completed: 0, failed: 0 };
+    });
+
+    jobs.forEach(job => {
+      const jobDate = job.created_at.split('T')[0];
+      if (jobsByDate[jobDate]) {
+        jobsByDate[jobDate].count++;
+        if (job.status === 'completed') {
+          jobsByDate[jobDate].completed++;
+        } else if (job.status === 'failed') {
+          jobsByDate[jobDate].failed++;
+        }
+      }
+    });
+
+    return dates.map(date => ({
+      date,
+      count: jobsByDate[date].count,
+      completed: jobsByDate[date].completed,
+      failed: jobsByDate[date].failed,
+    }));
+  } catch (error) {
+    console.error('ERROR: Failed to fetch jobs for trend:', error);
+    // Return empty data on error
+    return dates.map(date => ({
+      date,
+      count: 0,
+      completed: 0,
+      failed: 0,
+    }));
+  }
 };
 
 // Fetch users for growth trend
@@ -67,36 +78,44 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
   const dateFrom = dates[0];
   const dateTo = dates[dates.length - 1];
 
-  // Use API date filtering instead of client-side filtering
-  const response = await api.get<{ success: boolean; data: UsersApiResponse }>(
-    '/admin/users',
-    {
-      date_from: dateFrom,
-      date_to: dateTo,
-      limit: 1000, // Get all users in date range
-    }
-  );
+  try {
+    // Try API date filtering first
+    const response = await api.get<{ success: boolean; data: UsersApiResponse }>(
+      '/admin/users',
+      {
+        date_from: dateFrom,
+        date_to: dateTo,
+        limit: 100,
+      }
+    );
 
-  const users = response.data.users;
+    const users = response.data.users;
 
-  // Aggregate users by date
-  const usersByDate: Record<string, number> = {};
-  
-  dates.forEach(date => {
-    usersByDate[date] = 0;
-  });
+    // Aggregate users by date
+    const usersByDate: Record<string, number> = {};
+    dates.forEach(date => {
+      usersByDate[date] = 0;
+    });
 
-  users.forEach(user => {
-    const userDate = user.created_at.split('T')[0];
-    if (usersByDate[userDate] !== undefined) {
-      usersByDate[userDate]++;
-    }
-  });
+    users.forEach(user => {
+      const userDate = user.created_at.split('T')[0];
+      if (usersByDate[userDate] !== undefined) {
+        usersByDate[userDate]++;
+      }
+    });
 
-  return dates.map(date => ({
-    date,
-    count: usersByDate[date],
-  }));
+    return dates.map(date => ({
+      date,
+      count: usersByDate[date],
+    }));
+  } catch (error) {
+    console.error('ERROR: Failed to fetch users for growth:', error);
+    // Return empty data on error
+    return dates.map(date => ({
+      date,
+      count: 0,
+    }));
+  }
 };
 
 // Fetch top models
@@ -143,7 +162,6 @@ export const useJobTrend = () => {
     queryFn: fetchJobsForTrend,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    refetchInterval: 60 * 1000, // 1 minute
   });
 };
 
@@ -154,7 +172,6 @@ export const useUserGrowth = () => {
     queryFn: fetchUsersForGrowth,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    refetchInterval: 60 * 1000,
   });
 };
 
@@ -165,7 +182,6 @@ export const useTopModels = () => {
     queryFn: fetchTopModels,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    refetchInterval: 60 * 1000,
   });
 };
 
@@ -176,7 +192,6 @@ export const useRecentJobs = () => {
     queryFn: fetchRecentJobs,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000,
-    refetchInterval: 30 * 1000, // 30 seconds
   });
 };
 

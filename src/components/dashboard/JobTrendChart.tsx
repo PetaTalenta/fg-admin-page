@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { JobTrendData } from '@/types/api';
 
@@ -83,4 +84,3 @@ export default function JobTrendChart({ data, isLoading = false }: JobTrendChart
     </div>
   );
 }
-

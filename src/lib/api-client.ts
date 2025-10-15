@@ -25,6 +25,18 @@ apiClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+    
+    // Log API requests for debugging
+    console.log('API Request:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      params: config.params,
+      headers: {
+        ...config.headers,
+        Authorization: config.headers.Authorization ? '[REDACTED]' : undefined
+      }
+    });
+    
     return config;
   },
   (error) => {

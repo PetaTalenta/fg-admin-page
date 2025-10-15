@@ -40,6 +40,9 @@ export interface ApiError {
   statusCode: number;
 }
 
+// Re-export types for convenience
+export type { JobWithUser } from './job';
+
 // System Metrics Types
 export interface SystemMetrics {
   timestamp: string;
