@@ -9,7 +9,8 @@ interface JobTrendChartProps {
   isLoading?: boolean;
 }
 
-export default function JobTrendChart({ data, isLoading = false }: JobTrendChartProps) {
+export default function JobTrendChart(props: JobTrendChartProps) {
+  const { data, isLoading = false } = props;
   if (isLoading) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">

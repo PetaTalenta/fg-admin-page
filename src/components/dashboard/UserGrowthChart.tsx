@@ -9,7 +9,8 @@ interface UserGrowthChartProps {
   isLoading?: boolean;
 }
 
-export default function UserGrowthChart({ data, isLoading = false }: UserGrowthChartProps) {
+export default function UserGrowthChart(props: UserGrowthChartProps) {
+  const { data, isLoading = false } = props;
   if (isLoading) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
