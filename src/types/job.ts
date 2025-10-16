@@ -16,6 +16,7 @@ export interface Job {
   processing_started_at?: string | null;
   created_at: string;
   updated_at: string;
+  processingTimeSeconds?: number;
   user?: {
     id: string;
     email: string;
@@ -30,9 +31,26 @@ export interface JobStats {
     processing: number;
     completed: number;
     failed: number;
+    cancelled?: number;
     successRate: number;
     avgProcessingTimeMinutes: string;
   };
+  today?: {
+    total: number;
+    completed: number;
+    failed: number;
+  };
+  performance?: {
+    avgProcessingTimeSeconds: number;
+    avgProcessingTimeMinutes: string;
+  };
+  dailyMetrics?: Array<{
+    date: string;
+    total: string;
+    completed: string;
+    failed: string;
+  }>;
+  resourceUtilization?: Record<string, unknown>;
 }
 
 export interface JobResult {
@@ -40,7 +58,6 @@ export interface JobResult {
   user_id: string;
   test_data: Record<string, unknown>;
   test_result: Record<string, unknown>;
-  raw_responses: Record<string, unknown>;
   is_public: boolean;
   chatbot_id?: string | null;
   created_at: string;
@@ -55,7 +72,17 @@ export interface JobResultsResponse {
     assessment_name: string;
     completed_at?: string | null;
   };
-  result: JobResult;
+  result: {
+    id: string;
+    user_id: string;
+    test_data: Record<string, unknown>;
+    test_result: Record<string, unknown>;
+    raw_responses: Record<string, unknown>;
+    is_public: boolean;
+    chatbot_id?: string | null;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface JobsListResponse {

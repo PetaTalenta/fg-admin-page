@@ -432,7 +432,7 @@ export default function UserDetailPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           {job.status === 'completed' && (
                             <Link
-                              href={`/users/${userId}/jobs/${job.id}`}
+                              href={`/jobs/${job.id}`}
                               className="text-blue-600 hover:text-blue-800 font-medium"
                             >
                               View Results

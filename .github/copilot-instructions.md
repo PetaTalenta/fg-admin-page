@@ -1,4 +1,5 @@
 # Next.js Starter - Instruksi Agen AI
+Gubakan port 5000, kalau sudah dipakau berati sudah berjalan programnya
 
 ## Gambaran Arsitektur
 - **Framework**: Next.js 15 dengan App Router (bukan Pages Router)
