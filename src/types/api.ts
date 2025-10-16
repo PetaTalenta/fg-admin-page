@@ -20,17 +20,37 @@ export interface PaginatedResponse<T> {
 
 // API-specific response types for admin endpoints
 export interface JobsApiResponse {
-  jobs: import('./job').JobWithUser[];
-  pagination: PaginationMeta;
+  success: boolean;
+  message: string;
+  data: {
+    jobs: import('./job').Job[];
+    pagination: PaginationMeta;
+  };
+  timestamp: string;
 }
 
 export interface UsersApiResponse {
-  users: import('./user').User[];
-  pagination: PaginationMeta;
+  success: boolean;
+  message: string;
+  data: import('./user').User[] | { users: import('./user').User[]; pagination: PaginationMeta };
+  pagination?: PaginationMeta;
+  timestamp: string;
 }
 
 export interface ModelsApiResponse {
-  models: import('./chatbot').ModelUsage[];
+  success: boolean;
+  message: string;
+  data: {
+    summary: {
+      totalModels: number;
+      totalUsage: number;
+      freeModelUsage: number;
+      freeModelPercentage: string;
+      paidModelUsage: number;
+    };
+    models: import('./chatbot').ModelUsage[];
+  };
+  timestamp: string;
 }
 
 // Error Response
@@ -39,9 +59,6 @@ export interface ApiError {
   message: string;
   statusCode: number;
 }
-
-// Re-export types for convenience
-export type { JobWithUser } from './job';
 
 // System Metrics Types
 export interface SystemMetrics {

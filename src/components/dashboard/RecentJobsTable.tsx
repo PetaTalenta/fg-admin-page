@@ -1,16 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import type { JobWithUser } from '@/types/job';
+import type { Job } from '@/types/job';
 import { formatDate } from '@/lib/utils';
 
 interface RecentJobsTableProps {
-  jobs: JobWithUser[];
+  jobs: Job[];
   isLoading?: boolean;
 }
 
 const statusColors = {
-  queued: 'bg-yellow-100 text-yellow-800',
+  queue: 'bg-yellow-100 text-yellow-800',
   processing: 'bg-blue-100 text-blue-800',
   completed: 'bg-green-100 text-green-800',
   failed: 'bg-red-100 text-red-800',

@@ -22,7 +22,7 @@ const fetchJobsForTrend = async (): Promise<JobTrendData[]> => {
 
   try {
     // Use API date filtering instead of client-side filtering
-    const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
+    const response = await api.get<JobsApiResponse>(
       '/admin/jobs',
       {
         date_from: dateFrom,
@@ -32,6 +32,10 @@ const fetchJobsForTrend = async (): Promise<JobTrendData[]> => {
         sort_order: 'ASC', // Get chronological order
       }
     );
+
+    if (!response.data || !response.data.jobs) {
+      throw new Error('No jobs data received from API');
+    }
 
     const jobs = response.data.jobs;
 
@@ -80,7 +84,7 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
 
   try {
     // Try API date filtering first
-    const response = await api.get<{ success: boolean; data: UsersApiResponse }>(
+    const response = await api.get<UsersApiResponse>(
       '/admin/users',
       {
         date_from: dateFrom,
@@ -89,7 +93,12 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
       }
     );
 
-    const users = response.data.users;
+    if (!response.data) {
+      throw new Error('No users data received from API');
+    }
+
+    // Handle both possible response structures: data as array or data.users as array
+    const users = Array.isArray(response.data) ? response.data : response.data.users || [];
 
     // Aggregate users by date
     const usersByDate: Record<string, number> = {};
@@ -120,39 +129,68 @@ const fetchUsersForGrowth = async (): Promise<UserGrowthData[]> => {
 
 // Fetch top models
 const fetchTopModels = async (): Promise<ModelStats> => {
-  const response = await api.get<{ success: boolean; data: ModelsApiResponse }>('/admin/chatbot/models');
-  
-  const models = response.data.models;
-  const totalUsage = models.reduce((sum, model) => sum + model.usageCount, 0);
-  const freeModelUsage = models.filter(model => model.isFree).reduce((sum, model) => sum + model.usageCount, 0);
-  const paidModelUsage = totalUsage - freeModelUsage;
-  const freeModelPercentage = totalUsage > 0 ? ((freeModelUsage / totalUsage) * 100).toFixed(1) + '%' : '0.0%';
-  
-  return {
-    summary: {
-      totalModels: models.length,
-      totalUsage,
-      freeModelUsage,
-      freeModelPercentage,
-      paidModelUsage,
-    },
-    models: models.sort((a, b) => b.usageCount - a.usageCount), // Sort by usage count descending
-  };
+  try {
+    const response = await api.get<ModelsApiResponse>('/admin/chatbot/models');
+
+    if (!response.data || !response.data.models) {
+      throw new Error('No models data received from API');
+    }
+
+    const models = response.data.models;
+    const totalUsage = models.reduce((sum, model) => sum + model.usageCount, 0);
+    const freeModelUsage = models.filter(model => model.isFreeModel).reduce((sum, model) => sum + model.usageCount, 0);
+    const paidModelUsage = totalUsage - freeModelUsage;
+    const freeModelPercentage = totalUsage > 0 ? ((freeModelUsage / totalUsage) * 100).toFixed(1) + '%' : '0.0%';
+    
+    return {
+      summary: {
+        totalModels: models.length,
+        totalUsage,
+        freeModelUsage,
+        freeModelPercentage,
+        paidModelUsage,
+      },
+      models: models.sort((a, b) => b.usageCount - a.usageCount), // Sort by usage count descending
+    };
+  } catch (error) {
+    console.error('ERROR: Failed to fetch top models:', error);
+    // Return empty data on error
+    return {
+      summary: {
+        totalModels: 0,
+        totalUsage: 0,
+        freeModelUsage: 0,
+        freeModelPercentage: '0.0%',
+        paidModelUsage: 0,
+      },
+      models: [],
+    };
+  }
 };
 
 // Fetch recent jobs with user info
 const fetchRecentJobs = async () => {
-  const response = await api.get<{ success: boolean; data: JobsApiResponse }>(
-    '/admin/jobs',
-    {
-      page: 1,
-      limit: 10,
-      sort_by: 'created_at',
-      sort_order: 'DESC',
-    }
-  );
+  try {
+    const response = await api.get<JobsApiResponse>(
+      '/admin/jobs',
+      {
+        page: 1,
+        limit: 10,
+        sort_by: 'created_at',
+        sort_order: 'DESC',
+      }
+    );
 
-  return response.data.jobs;
+    if (!response.data || !response.data.jobs) {
+      throw new Error('No jobs data received from API');
+    }
+
+    return response.data.jobs;
+  } catch (error) {
+    console.error('ERROR: Failed to fetch recent jobs:', error);
+    // Return empty array on error
+    return [];
+  }
 };
 
 // Hook for job trend data

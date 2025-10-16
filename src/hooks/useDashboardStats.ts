@@ -5,8 +5,8 @@ import type { ChatbotStats } from '@/types/chatbot';
 import type { SystemMetrics, DashboardStats } from '@/types/api';
 
 // Fetch job statistics
-const fetchJobStats = async (): Promise<JobStats> => {
-  const response = await api.get<{ success: boolean; data: { overview: JobStats } }>('/admin/jobs/stats');
+const fetchJobStats = async (): Promise<JobStats['overview']> => {
+  const response = await api.get<{ success: boolean; data: JobStats }>('/admin/jobs/stats');
   return response.data.overview;
 };
 

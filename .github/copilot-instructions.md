@@ -27,6 +27,10 @@ import { hook } from '@/hooks/useHook'          // ./src/hooks/
 - **Komponen Page**: Tidak suka modularisasi komponen untuk suatu page. Semua komponen yang dibutuhkan oleh suatu page harus didefinisikan langsung di dalam file page tersebut, bukan diimpor dari folder components.
 - **Modul Global**: Untuk utils, service, hooks, store, dan modul lainnya, tetap gunakan yang global dan diimpor dari folder yang sesuai (misalnya `@/lib/utils`, `@/hooks/useHook`).
 
+gunakan kredensial ini jika perlu menggunakan endpoint login untuk mendapatkan token admin
+email: admin@futureguide.id
+password: admin123
+
 ## Fitur Proyek - Admin Dashboard
 
 Proyek ini adalah admin dashboard untuk mengelola users, jobs, dan chatbot dengan empat halaman utama:

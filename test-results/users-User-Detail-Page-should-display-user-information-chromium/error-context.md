@@ -1,0 +1,335 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - heading "FutureGuide" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img [ref=e10]
+          - text: Dashboard
+        - link "Users" [ref=e12] [cursor=pointer]:
+          - /url: /users
+          - img [ref=e14]
+          - text: Users
+        - link "Jobs" [ref=e16] [cursor=pointer]:
+          - /url: /jobs
+          - img [ref=e18]
+          - text: Jobs
+        - link "Chatbot" [ref=e20] [cursor=pointer]:
+          - /url: /chatbot
+          - img [ref=e22]
+          - text: Chatbot
+      - paragraph [ref=e25]: © 2025 FutureGuide Admin
+    - generic [ref=e26]:
+      - banner [ref=e27]:
+        - heading "Admin Dashboard" [level=2] [ref=e29]
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - paragraph [ref=e32]: admin@futureguide.id
+            - paragraph [ref=e33]: superadmin
+          - generic [ref=e35]: A
+          - button "Logout" [ref=e36] [cursor=pointer]:
+            - generic [ref=e37]:
+              - img [ref=e38]
+              - generic [ref=e40]: Logout
+      - main [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - heading "User Management" [level=1] [ref=e44]
+            - paragraph [ref=e45]: Manage users, view details, and update token balances
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - generic [ref=e49]: Search
+                - textbox "Search" [ref=e50]:
+                  - /placeholder: Search by email or username...
+              - generic [ref=e51]:
+                - generic [ref=e52]: User Type
+                - combobox "User Type" [ref=e53]:
+                  - option "All Types" [selected]
+                  - option "User"
+                  - option "Admin"
+                  - option "Superadmin"
+              - generic [ref=e54]:
+                - generic [ref=e55]: Status
+                - combobox "Status" [ref=e56]:
+                  - option "All Status" [selected]
+                  - option "Active"
+                  - option "Inactive"
+              - generic [ref=e57]:
+                - generic [ref=e58]: Auth Provider
+                - combobox "Auth Provider" [ref=e59]:
+                  - option "All Providers" [selected]
+                  - option "Local"
+                  - option "Google"
+                  - option "Firebase"
+            - button "Clear Filters" [ref=e61] [cursor=pointer]
+          - generic [ref=e62]:
+            - table [ref=e64]:
+              - rowgroup [ref=e65]:
+                - row "Username Email User Type Status Token Balance Last Login Created At" [ref=e66]:
+                  - cell "Username" [ref=e67]
+                  - cell "Email" [ref=e68]
+                  - cell "User Type" [ref=e69]
+                  - cell "Status" [ref=e70]
+                  - cell "Token Balance" [ref=e71]
+                  - cell "Last Login" [ref=e72]
+                  - cell "Created At" [ref=e73]
+              - rowgroup [ref=e74]:
+                - row "updatedtestuser ariesrock06@gmail.com user Active 709 10/13/2025 10/13/2025" [ref=e75] [cursor=pointer]:
+                  - cell "updatedtestuser" [ref=e76]:
+                    - link "updatedtestuser" [ref=e77]:
+                      - /url: /users/6bdbe89b-0a56-4d94-b293-c951a604484a
+                  - cell "ariesrock06@gmail.com" [ref=e78]
+                  - cell "user" [ref=e79]:
+                    - generic [ref=e80]: user
+                  - cell "Active" [ref=e81]:
+                    - generic [ref=e82]: Active
+                  - cell "709" [ref=e83]
+                  - cell "10/13/2025" [ref=e84]
+                  - cell "10/13/2025" [ref=e85]
+                - row "shabrina_4vSL9r mifhtahul.husna@gmail.com user Active 2 Never 10/13/2025" [ref=e86] [cursor=pointer]:
+                  - cell "shabrina_4vSL9r" [ref=e87]:
+                    - link "shabrina_4vSL9r" [ref=e88]:
+                      - /url: /users/b5a198fb-c19e-45c9-8746-7ad531bc295f
+                  - cell "mifhtahul.husna@gmail.com" [ref=e89]
+                  - cell "user" [ref=e90]:
+                    - generic [ref=e91]: user
+                  - cell "Active" [ref=e92]:
+                    - generic [ref=e93]: Active
+                  - cell "2" [ref=e94]
+                  - cell "Never" [ref=e95]
+                  - cell "10/13/2025" [ref=e96]
+                - row "MIFTHAHUL HUSNA mifthahul.husna09@gmail.com user Active 3 10/13/2025 10/13/2025" [ref=e97] [cursor=pointer]:
+                  - cell "MIFTHAHUL HUSNA" [ref=e98]:
+                    - link "MIFTHAHUL HUSNA" [ref=e99]:
+                      - /url: /users/41dbc350-5f54-4f25-84bc-da11294cac15
+                  - cell "mifthahul.husna09@gmail.com" [ref=e100]
+                  - cell "user" [ref=e101]:
+                    - generic [ref=e102]: user
+                  - cell "Active" [ref=e103]:
+                    - generic [ref=e104]: Active
+                  - cell "3" [ref=e105]
+                  - cell "10/13/2025" [ref=e106]
+                  - cell "10/13/2025" [ref=e107]
+                - row "shabrina shab1n0iii@gmail.com user Active 3 10/13/2025 10/13/2025" [ref=e108] [cursor=pointer]:
+                  - cell "shabrina" [ref=e109]:
+                    - link "shabrina" [ref=e110]:
+                      - /url: /users/139e8480-f797-48fc-bd9f-eb2055572839
+                  - cell "shab1n0iii@gmail.com" [ref=e111]
+                  - cell "user" [ref=e112]:
+                    - generic [ref=e113]: user
+                  - cell "Active" [ref=e114]:
+                    - generic [ref=e115]: Active
+                  - cell "3" [ref=e116]
+                  - cell "10/13/2025" [ref=e117]
+                  - cell "10/13/2025" [ref=e118]
+                - row "mikkail adam mikkhaira@gmail.com user Active 2 10/13/2025 10/13/2025" [ref=e119] [cursor=pointer]:
+                  - cell "mikkail adam" [ref=e120]:
+                    - link "mikkail adam" [ref=e121]:
+                      - /url: /users/12b832e6-f64c-46e6-afc0-711cac0b4f7b
+                  - cell "mikkhaira@gmail.com" [ref=e122]
+                  - cell "user" [ref=e123]:
+                    - generic [ref=e124]: user
+                  - cell "Active" [ref=e125]:
+                    - generic [ref=e126]: Active
+                  - cell "2" [ref=e127]
+                  - cell "10/13/2025" [ref=e128]
+                  - cell "10/13/2025" [ref=e129]
+                - row "naylaamira nayla.amira100@gmail.com user Active 2 10/13/2025 10/13/2025" [ref=e130] [cursor=pointer]:
+                  - cell "naylaamira" [ref=e131]:
+                    - link "naylaamira" [ref=e132]:
+                      - /url: /users/dd567a50-ac39-43d6-a232-70ab0524c047
+                  - cell "nayla.amira100@gmail.com" [ref=e133]
+                  - cell "user" [ref=e134]:
+                    - generic [ref=e135]: user
+                  - cell "Active" [ref=e136]:
+                    - generic [ref=e137]: Active
+                  - cell "2" [ref=e138]
+                  - cell "10/13/2025" [ref=e139]
+                  - cell "10/13/2025" [ref=e140]
+                - row "afiq afiq.aqha26@gmail.com user Active 2 10/13/2025 10/13/2025" [ref=e141] [cursor=pointer]:
+                  - cell "afiq" [ref=e142]:
+                    - link "afiq" [ref=e143]:
+                      - /url: /users/28334c3b-6072-46be-848d-de5a13834323
+                  - cell "afiq.aqha26@gmail.com" [ref=e144]
+                  - cell "user" [ref=e145]:
+                    - generic [ref=e146]: user
+                  - cell "Active" [ref=e147]:
+                    - generic [ref=e148]: Active
+                  - cell "2" [ref=e149]
+                  - cell "10/13/2025" [ref=e150]
+                  - cell "10/13/2025" [ref=e151]
+                - row "Test User_YUOPXi test_user_1760321309064@example.com user Active 2 Never 10/13/2025" [ref=e152] [cursor=pointer]:
+                  - cell "Test User_YUOPXi" [ref=e153]:
+                    - link "Test User_YUOPXi" [ref=e154]:
+                      - /url: /users/fd643092-0a48-447b-a51b-4cb2276a9c44
+                  - cell "test_user_1760321309064@example.com" [ref=e155]
+                  - cell "user" [ref=e156]:
+                    - generic [ref=e157]: user
+                  - cell "Active" [ref=e158]:
+                    - generic [ref=e159]: Active
+                  - cell "2" [ref=e160]
+                  - cell "Never" [ref=e161]
+                  - cell "10/13/2025" [ref=e162]
+                - row "Test User_mO1t7h test_user_1760231925153@example.com user Active 2 Never 10/12/2025" [ref=e163] [cursor=pointer]:
+                  - cell "Test User_mO1t7h" [ref=e164]:
+                    - link "Test User_mO1t7h" [ref=e165]:
+                      - /url: /users/6d0f0196-0166-4362-997e-bb99c832efe2
+                  - cell "test_user_1760231925153@example.com" [ref=e166]
+                  - cell "user" [ref=e167]:
+                    - generic [ref=e168]: user
+                  - cell "Active" [ref=e169]:
+                    - generic [ref=e170]: Active
+                  - cell "2" [ref=e171]
+                  - cell "Never" [ref=e172]
+                  - cell "10/12/2025" [ref=e173]
+                - row "testadminupdated superadmin@atma.com admin Active 0 10/14/2025 10/11/2025" [ref=e174] [cursor=pointer]:
+                  - cell "testadminupdated" [ref=e175]:
+                    - link "testadminupdated" [ref=e176]:
+                      - /url: /users/0dcef415-20cb-4362-8c16-9ef9a5c556eb
+                  - cell "superadmin@atma.com" [ref=e177]
+                  - cell "admin" [ref=e178]:
+                    - generic [ref=e179]: admin
+                  - cell "Active" [ref=e180]:
+                    - generic [ref=e181]: Active
+                  - cell "0" [ref=e182]
+                  - cell "10/14/2025" [ref=e183]
+                  - cell "10/11/2025" [ref=e184]
+                - row "maylafupdated mayllaaff@gmail.com user Active 16 Never 10/10/2025" [ref=e185] [cursor=pointer]:
+                  - cell "maylafupdated" [ref=e186]:
+                    - link "maylafupdated" [ref=e187]:
+                      - /url: /users/d3e6f6c6-217d-442c-9e7f-24573fbe7a4e
+                  - cell "mayllaaff@gmail.com" [ref=e188]
+                  - cell "user" [ref=e189]:
+                    - generic [ref=e190]: user
+                  - cell "Active" [ref=e191]:
+                    - generic [ref=e192]: Active
+                  - cell "16" [ref=e193]
+                  - cell "Never" [ref=e194]
+                  - cell "10/10/2025" [ref=e195]
+                - row "Puji Santoso_3Z9vxX puji.santoso1981@gmail.com user Active 3 Never 10/10/2025" [ref=e196] [cursor=pointer]:
+                  - cell "Puji Santoso_3Z9vxX" [ref=e197]:
+                    - link "Puji Santoso_3Z9vxX" [ref=e198]:
+                      - /url: /users/279d37fb-3b9c-486d-a5db-eed49026e579
+                  - cell "puji.santoso1981@gmail.com" [ref=e199]
+                  - cell "user" [ref=e200]:
+                    - generic [ref=e201]: user
+                  - cell "Active" [ref=e202]:
+                    - generic [ref=e203]: Active
+                  - cell "3" [ref=e204]
+                  - cell "Never" [ref=e205]
+                  - cell "10/10/2025" [ref=e206]
+                - row "Amri amrirasheesha@gmail.com user Active 103 10/9/2025 10/9/2025" [ref=e207] [cursor=pointer]:
+                  - cell "Amri" [ref=e208]:
+                    - link "Amri" [ref=e209]:
+                      - /url: /users/c05ba8da-6ead-4e34-a317-27f161a38cfd
+                  - cell "amrirasheesha@gmail.com" [ref=e210]
+                  - cell "user" [ref=e211]:
+                    - generic [ref=e212]: user
+                  - cell "Active" [ref=e213]:
+                    - generic [ref=e214]: Active
+                  - cell "103" [ref=e215]
+                  - cell "10/9/2025" [ref=e216]
+                  - cell "10/9/2025" [ref=e217]
+                - row "m1rgibly emirgibran20@gmail.com user Active 2 10/13/2025 10/9/2025" [ref=e218] [cursor=pointer]:
+                  - cell "m1rgibly" [ref=e219]:
+                    - link "m1rgibly" [ref=e220]:
+                      - /url: /users/aa8dc262-d921-49a0-9c4c-4119a2336136
+                  - cell "emirgibran20@gmail.com" [ref=e221]
+                  - cell "user" [ref=e222]:
+                    - generic [ref=e223]: user
+                  - cell "Active" [ref=e224]:
+                    - generic [ref=e225]: Active
+                  - cell "2" [ref=e226]
+                  - cell "10/13/2025" [ref=e227]
+                  - cell "10/9/2025" [ref=e228]
+                - row "osseestudentgunadarmaacid adamada1244@gmail.com user Active 3 10/14/2025 10/9/2025" [ref=e229] [cursor=pointer]:
+                  - cell "osseestudentgunadarmaacid" [ref=e230]:
+                    - link "osseestudentgunadarmaacid" [ref=e231]:
+                      - /url: /users/b7655cb0-b188-4424-83ab-1dae2397cd43
+                  - cell "adamada1244@gmail.com" [ref=e232]
+                  - cell "user" [ref=e233]:
+                    - generic [ref=e234]: user
+                  - cell "Active" [ref=e235]:
+                    - generic [ref=e236]: Active
+                  - cell "3" [ref=e237]
+                  - cell "10/14/2025" [ref=e238]
+                  - cell "10/9/2025" [ref=e239]
+                - row "rayiil_gEMuAA adsgsa@gmail.com user Active 2 Never 10/9/2025" [ref=e240] [cursor=pointer]:
+                  - cell "rayiil_gEMuAA" [ref=e241]:
+                    - link "rayiil_gEMuAA" [ref=e242]:
+                      - /url: /users/b3154e28-02bd-430b-9f6c-03c3d37a50b3
+                  - cell "adsgsa@gmail.com" [ref=e243]
+                  - cell "user" [ref=e244]:
+                    - generic [ref=e245]: user
+                  - cell "Active" [ref=e246]:
+                    - generic [ref=e247]: Active
+                  - cell "2" [ref=e248]
+                  - cell "Never" [ref=e249]
+                  - cell "10/9/2025" [ref=e250]
+                - row "Bevis onionofgermanychina@gmail.com user Active 2 10/9/2025 10/9/2025" [ref=e251] [cursor=pointer]:
+                  - cell "Bevis" [ref=e252]:
+                    - link "Bevis" [ref=e253]:
+                      - /url: /users/91a9d9c9-96eb-478a-a27f-532a882e3aae
+                  - cell "onionofgermanychina@gmail.com" [ref=e254]
+                  - cell "user" [ref=e255]:
+                    - generic [ref=e256]: user
+                  - cell "Active" [ref=e257]:
+                    - generic [ref=e258]: Active
+                  - cell "2" [ref=e259]
+                  - cell "10/9/2025" [ref=e260]
+                  - cell "10/9/2025" [ref=e261]
+                - row "Nino ninorazzaqrafiano@gmail.com user Active 2 10/12/2025 10/9/2025" [ref=e262] [cursor=pointer]:
+                  - cell "Nino" [ref=e263]:
+                    - link "Nino" [ref=e264]:
+                      - /url: /users/c8697e5f-14f8-4e1f-961a-b3ace1497edb
+                  - cell "ninorazzaqrafiano@gmail.com" [ref=e265]
+                  - cell "user" [ref=e266]:
+                    - generic [ref=e267]: user
+                  - cell "Active" [ref=e268]:
+                    - generic [ref=e269]: Active
+                  - cell "2" [ref=e270]
+                  - cell "10/12/2025" [ref=e271]
+                  - cell "10/9/2025" [ref=e272]
+                - row "Rayii rayi.narayan@gmail.com user Active 3 10/12/2025 10/9/2025" [ref=e273] [cursor=pointer]:
+                  - cell "Rayii" [ref=e274]:
+                    - link "Rayii" [ref=e275]:
+                      - /url: /users/2c778344-3eb4-4390-8bf1-962a84c9470d
+                  - cell "rayi.narayan@gmail.com" [ref=e276]
+                  - cell "user" [ref=e277]:
+                    - generic [ref=e278]: user
+                  - cell "Active" [ref=e279]:
+                    - generic [ref=e280]: Active
+                  - cell "3" [ref=e281]
+                  - cell "10/12/2025" [ref=e282]
+                  - cell "10/9/2025" [ref=e283]
+                - row "Fajar Reza Ramadhon fajarrezaramadhon@gmail.com user Active 2 10/9/2025 10/9/2025" [ref=e284] [cursor=pointer]:
+                  - cell "Fajar Reza Ramadhon" [ref=e285]:
+                    - link "Fajar Reza Ramadhon" [ref=e286]:
+                      - /url: /users/784a90ca-ff36-4012-a6fc-cc0ee7aa6484
+                  - cell "fajarrezaramadhon@gmail.com" [ref=e287]
+                  - cell "user" [ref=e288]:
+                    - generic [ref=e289]: user
+                  - cell "Active" [ref=e290]:
+                    - generic [ref=e291]: Active
+                  - cell "2" [ref=e292]
+                  - cell "10/9/2025" [ref=e293]
+                  - cell "10/9/2025" [ref=e294]
+            - generic [ref=e296]:
+              - paragraph [ref=e298]: Showing 1 to 20 of 324 results
+              - navigation "Pagination" [ref=e300]:
+                - button "Previous" [disabled] [ref=e301]
+                - button "1" [ref=e302] [cursor=pointer]
+                - button "2" [ref=e303] [cursor=pointer]
+                - button "3" [ref=e304] [cursor=pointer]
+                - button "4" [ref=e305] [cursor=pointer]
+                - button "5" [ref=e306] [cursor=pointer]
+                - button "Next" [ref=e307] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e313] [cursor=pointer]:
+    - img [ref=e314]
+  - alert [ref=e317]
+```
