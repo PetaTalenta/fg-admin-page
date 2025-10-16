@@ -60,40 +60,472 @@ const JSONViewer = ({ data, title }: { data: unknown; title: string }) => {
   );
 };
 
-// Structured Data Display Component
-const StructuredDataDisplay = ({ data, title }: { data: unknown; title: string }) => {
-  if (!data || typeof data !== 'object') {
+// Raw Responses Table Component
+const RawResponsesTable = ({ data }: { data: Record<string, Array<{ value: number; questionId: string }>> }) => {
+  const [activeTab, setActiveTab] = useState<string>('ocean');
+  const tabs = Object.keys(data).filter(key => Array.isArray(data[key]) && data[key].length > 0);
+
+  if (tabs.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-        <p className="text-sm text-gray-500">No data available</p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Raw Responses</h3>
+        <p className="text-sm text-gray-500">No raw responses available</p>
       </div>
     );
   }
 
+  const currentData = data[activeTab] || [];
+
+  // Map activeTab to correct prefix for parsing
+  const prefixMap: Record<string, string> = {
+    ocean: 'OCEAN',
+    riasec: 'RIASEC',
+    viaIs: 'VIA'
+  };
+  const prefix = prefixMap[activeTab] || activeTab.toUpperCase();
+
+  // Parse question IDs to extract categories and numbers
+  const parseQuestionId = (questionId: string, prefix: string) => {
+    if (prefix === 'VIA') {
+      // VIA format: VIA_STRENGTHNAME_NUMBER
+      const withoutPrefix = questionId.replace(`${prefix}_`, '');
+      const parts = withoutPrefix.split('_');
+      const number = parseInt(parts[parts.length - 1]);
+      const category = parts.slice(0, -1).join('_');
+      return { category, number };
+    } else {
+      // OCEAN/RIASEC format: PREFIX_CATEGORYNUMBER
+      const withoutPrefix = questionId.replace(`${prefix}_`, '');
+      const category = withoutPrefix.charAt(0);
+      const number = parseInt(withoutPrefix.substring(1));
+      return { category, number };
+    }
+  };
+
+  // Group data by number and category
+  const groupedData: Record<number, Record<string, number>> = {};
+  const categories = new Set<string>();
+
+  currentData.forEach(item => {
+    const { category, number } = parseQuestionId(item.questionId, prefix);
+
+    // Skip invalid entries where number is NaN
+    if (isNaN(number)) {
+      console.warn(`Invalid questionId format: ${item.questionId}`);
+      return;
+    }
+
+    if (!groupedData[number]) {
+      groupedData[number] = {};
+    }
+    groupedData[number][category] = item.value;
+    categories.add(category);
+  });
+
+  const categoryOrder: Record<string, string[]> = {
+    ocean: ['O', 'C', 'E', 'A', 'N'],
+    riasec: ['R', 'I', 'A', 'S', 'E', 'C'],
+    viaIs: [
+      'CREATIVITY', 'CURIOSITY', 'JUDGEMENT', 'LOVEOFLEARNING', 'PERSPECTIVE',
+      'BRAVERY', 'PERSEVERANCE', 'HONESTY', 'ZEST', 'LOVE', 'KINDNESS',
+      'SOCIALINTELLIGENCE', 'TEAMWORK', 'FAIRNESS', 'LEADERSHIP', 'FORGIVENESS',
+      'HUMILITY', 'PRUDENCE', 'SELFREGULATION', 'APPRECIATIONOFBEAUTY',
+      'GRATITUDE', 'HOPE', 'HUMOR', 'SPIRITUALITY'
+    ],
+    // Add more categories if needed
+  };
+
+  const orderedCategories = categoryOrder[activeTab] || Array.from(categories).sort();
+  const sortedNumbers = Object.keys(groupedData)
+    .map(Number)
+    .filter(num => !isNaN(num))
+    .sort((a, b) => a - b);
+
+  // Format category names for display
+  const formatCategoryName = (category: string, tab: string) => {
+    if (tab === 'viaIs') {
+      // Shorten VIA strength names for better display
+      const shortNames: Record<string, string> = {
+        'CREATIVITY': 'Creativity',
+        'CURIOSITY': 'Curiosity',
+        'JUDGEMENT': 'Judgement',
+        'LOVEOFLEARNING': 'Love Learning',
+        'PERSPECTIVE': 'Perspective',
+        'BRAVERY': 'Bravery',
+        'PERSEVERANCE': 'Perseverance',
+        'HONESTY': 'Honesty',
+        'ZEST': 'Zest',
+        'LOVE': 'Love',
+        'KINDNESS': 'Kindness',
+        'SOCIALINTELLIGENCE': 'Social IQ',
+        'TEAMWORK': 'Teamwork',
+        'FAIRNESS': 'Fairness',
+        'LEADERSHIP': 'Leadership',
+        'FORGIVENESS': 'Forgiveness',
+        'HUMILITY': 'Humility',
+        'PRUDENCE': 'Prudence',
+        'SELFREGULATION': 'Self-Reg',
+        'APPRECIATIONOFBEAUTY': 'Apprec. Beauty',
+        'GRATITUDE': 'Gratitude',
+        'HOPE': 'Hope',
+        'HUMOR': 'Humor',
+        'SPIRITUALITY': 'Spirituality'
+      };
+      return shortNames[category] || category;
+    }
+    return category;
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-      <div className="space-y-3">
-        {Object.entries(data).map(([key, value]) => (
-          <div key={key} className="border-b border-gray-100 pb-3 last:border-0">
-            <p className="text-sm font-medium text-gray-700 mb-1">{key}</p>
-            {typeof value === 'object' && value !== null ? (
-              <div className="ml-4 space-y-2">
-                {Object.entries(value).map(([subKey, subValue]) => (
-                  <div key={subKey} className="flex justify-between">
-                    <span className="text-sm text-gray-600">{subKey}:</span>
-                    <span className="text-sm text-gray-900 font-medium">
-                      {typeof subValue === 'object' ? JSON.stringify(subValue) : String(subValue)}
-                    </span>
-                  </div>
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900">Raw Responses</h3>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-gray-200">
+        <div className="flex overflow-x-auto">
+          {tabs.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 text-sm font-medium whitespace-nowrap ${
+                activeTab === tab
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Compact Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                #
+              </th>
+              {orderedCategories.map(category => (
+                <th key={category} className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {formatCategoryName(category, activeTab)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {sortedNumbers.map(number => (
+              <tr key={number} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {number}
+                </td>
+                {orderedCategories.map(category => (
+                  <td key={category} className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-900">
+                    {groupedData[number][category] !== undefined ? groupedData[number][category] : '-'}
+                  </td>
                 ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-900">{String(value)}</p>
-            )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// Test Data Table Component
+const TestDataTable = ({ data }: { data: Record<string, unknown> }): JSX.Element => {
+  const [activeTab, setActiveTab] = useState<string>('ocean');
+
+  // Filter out _metadata and get valid tabs
+  const tabs = Object.keys(data).filter(key =>
+    key !== '_metadata' &&
+    typeof data[key] === 'object' &&
+    data[key] !== null &&
+    Object.keys(data[key] as Record<string, unknown>).length > 0
+  );
+
+  if (tabs.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Test Data</h3>
+        <p className="text-sm text-gray-500">No test data available</p>
+      </div>
+    );
+  }
+
+  const currentData: Record<string, unknown> = (data[activeTab] as Record<string, unknown>) || {};
+
+  return (
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900">Test Data</h3>
+      </div>
+
+      <div className="border-b border-gray-200">
+        <div className="flex overflow-x-auto">
+          {tabs.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 text-sm font-medium whitespace-nowrap ${
+                activeTab === tab
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab === 'industryScore' ? 'Industry Score' : tab.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Attribute
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Score
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {Object.entries(currentData).map(([key, value]) => (
+              <tr key={key} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">
+                  {key}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {typeof value === 'number' ? value.toString() : JSON.stringify(value)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+  );
+};
+
+// Career Recommendation Renderer Component
+const CareerRecommendationRenderer = ({ recommendations }: { recommendations: Array<Record<string, unknown>> }) => {
+  const getProspectColor = (value: string) => {
+    switch (value) {
+      case 'low': return 'bg-green-100 text-green-800';
+      case 'moderate': return 'bg-yellow-100 text-yellow-800';
+      case 'high': return 'bg-blue-100 text-blue-800';
+      case 'super high': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {recommendations.map((rec, index) => (
+        <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h4 className="text-lg font-semibold text-gray-900 mb-3">
+            {rec.careerName as string}
+          </h4>
+          <p className="text-sm text-gray-700 mb-4 leading-relaxed">
+            {rec.justification as string}
+          </p>
+          <div className="mb-4">
+            <h5 className="text-sm font-medium text-gray-900 mb-2">Related Majors:</h5>
+            <ul className="list-disc list-inside space-y-1">
+              {(rec.relatedMajors as string[]).map((major, idx) => (
+                <li key={idx} className="text-sm text-gray-700">{major}</li>
+              ))}
+            </ul>
           </div>
-        ))}
+          <div>
+            <h5 className="text-sm font-medium text-gray-900 mb-2">Career Prospects:</h5>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(rec.careerProspect as Record<string, string>).map(([key, value]) => (
+                <div key={key} className="flex justify-between items-center">
+                  <span className="text-xs text-gray-600 capitalize">
+                    {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                  </span>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getProspectColor(value)}`}>
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Development Activities Renderer Component
+const DevelopmentActivitiesRenderer = ({ activities }: { activities: Record<string, unknown> }) => {
+  const extracurricular = activities.extracurricular as string[];
+  const bookRecommendations = activities.bookRecommendations as Array<{ title: string; author: string; reason: string }>;
+
+  return (
+    <div className="space-y-6">
+      {/* Extracurricular Activities */}
+      <div>
+        <h4 className="text-md font-semibold text-gray-900 mb-3">Extracurricular Activities</h4>
+        <ul className="list-disc list-inside space-y-2">
+          {extracurricular.map((activity, index) => (
+            <li key={index} className="text-sm text-gray-700">{activity}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Book Recommendations */}
+      <div>
+        <h4 className="text-md font-semibold text-gray-900 mb-3">Book Recommendations</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {bookRecommendations.map((book, index) => (
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+              <h5 className="text-sm font-semibold text-gray-900 mb-2">{book.title}</h5>
+              <p className="text-xs text-gray-600 italic mb-3">by {book.author}</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{book.reason}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Role Model Renderer Component
+const RoleModelRenderer = ({ roleModels }: { roleModels: Array<{ name: string; title: string }> }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {roleModels.map((model, index) => (
+        <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow text-center">
+          <h5 className="text-sm font-semibold text-gray-900 mb-2">{model.name}</h5>
+          <p className="text-xs text-gray-600">{model.title}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Test Result Grid Component
+const TestResultGrid = ({ data }: { data: Record<string, unknown> }) => {
+  const renderValue = (value: unknown) => {
+    if (Array.isArray(value)) {
+      if (value.length === 0) return <p className="text-sm text-gray-500">No data</p>;
+
+      // Check if array contains objects (like roleModel, careerRecommendation)
+      if (typeof value[0] === 'object' && value[0] !== null) {
+        return (
+          <div className="space-y-3">
+            {value.map((item, index) => (
+              <div key={index} className="p-3 bg-gray-50 rounded border border-gray-200">
+                <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans">
+                  {JSON.stringify(item, null, 2)}
+                </pre>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      // Array of strings
+      return (
+        <ul className="list-disc list-inside space-y-1">
+          {value.map((item, index) => (
+            <li key={index} className="text-sm text-gray-700">{String(item)}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return (
+        <div className="p-3 bg-gray-50 rounded border border-gray-200">
+          <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans">
+            {JSON.stringify(value, null, 2)}
+          </pre>
+        </div>
+      );
+    }
+
+    return <p className="text-sm text-gray-700 whitespace-pre-wrap">{String(value)}</p>;
+  };
+
+  const formatLabel = (key: string): string => {
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
+  // Define custom order for sections
+  const orderedKeys = ['strengths', 'strengthSummary', 'weaknesses', 'weaknessSummary'];
+  const orderedEntries = orderedKeys.map(key => [key, data[key]] as const).filter(([, v]) => v !== undefined);
+  const remainingEntries = Object.entries(data).filter(([key]) => !orderedKeys.includes(key) && !['archetype', 'learningStyle', 'riskTolerance', 'shortSummary'].includes(key));
+  const allEntries = [...orderedEntries, ...remainingEntries];
+
+  // Check if combined profile section exists
+  const hasCombinedProfile = !!(data.archetype && data.learningStyle && data.riskTolerance && data.shortSummary);
+
+  return (
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900">Test Result</h3>
+      </div>
+
+      <div className="p-6">
+        <div className="columns-2 gap-6 space-y-6">
+          {hasCombinedProfile && (
+            <div className="border border-gray-200 rounded-lg p-4 break-inside-avoid">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+                Profile Summary
+              </h4>
+              <div>
+                <div className="mb-4">
+                  <h5 className="text-xs font-medium text-gray-700 uppercase tracking-wide mb-2">Archetype</h5>
+                  <p className="text-sm text-gray-900">{String(data.archetype)}</p>
+                </div>
+                <div className="mb-4">
+                  <h5 className="text-xs font-medium text-gray-700 uppercase tracking-wide mb-2">Learning Style</h5>
+                  <p className="text-sm text-gray-900">{String(data.learningStyle)}</p>
+                </div>
+                <div className="mb-4">
+                  <h5 className="text-xs font-medium text-gray-700 uppercase tracking-wide mb-2">Risk Tolerance</h5>
+                  <p className="text-sm text-gray-900">{String(data.riskTolerance)}</p>
+                </div>
+                <div>
+                  <h5 className="text-xs font-medium text-gray-700 uppercase tracking-wide mb-2">Short Summary</h5>
+                  <p className="text-sm text-gray-900 whitespace-pre-wrap">{String(data.shortSummary)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          {allEntries.map(([key, value]) => (
+            <div key={key} className="border border-gray-200 rounded-lg p-4 break-inside-avoid">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+                {formatLabel(key)}
+              </h4>
+              <div className={key === 'careerRecommendation' || key === 'developmentActivities' ? '' : 'max-h-96 overflow-y-auto'}>
+                {key === 'careerRecommendation' && Array.isArray(value) ? (
+                  <CareerRecommendationRenderer recommendations={value as Array<Record<string, unknown>>} />
+                ) : key === 'developmentActivities' && typeof value === 'object' && value !== null ? (
+                  <DevelopmentActivitiesRenderer activities={value as Record<string, unknown>} />
+                ) : key === 'roleModel' && Array.isArray(value) ? (
+                  <RoleModelRenderer roleModels={value as Array<{ name: string; title: string }>} />
+                ) : (
+                  renderValue(value)
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -104,6 +536,11 @@ export default function JobDetailPage() {
   const router = useRouter();
   const jobId = params.id as string;
   const [referrer, setReferrer] = useState<string | null>(null);
+
+  // Collapse/Expand states for sections
+  const [isTestDataExpanded, setIsTestDataExpanded] = useState(true);
+  const [isTestResultExpanded, setIsTestResultExpanded] = useState(true);
+  const [isRawResponsesExpanded, setIsRawResponsesExpanded] = useState(true);
 
   useEffect(() => {
     // Detect referrer to determine back button behavior
@@ -282,36 +719,65 @@ export default function JobDetailPage() {
             <>
               {/* Test Data */}
               {results.result?.test_data && (
-                <div>
-                  <StructuredDataDisplay data={results.result.test_data} title="Test Data" />
-                  <div className="mt-4">
-                    <JSONViewer data={results.result.test_data} title="Test Data (JSON)" />
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Test Data</h3>
+                    <button
+                      onClick={() => setIsTestDataExpanded(!isTestDataExpanded)}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      {isTestDataExpanded ? 'Collapse' : 'Expand'}
+                    </button>
                   </div>
+                  {isTestDataExpanded && (
+                    <div className="p-6 space-y-4">
+                      <TestDataTable data={results.result.test_data as Record<string, unknown>} />
+                      <JSONViewer data={results.result.test_data} title="Test Data (Raw JSON)" />
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Test Result */}
               {results.result?.test_result && (
-                <div>
-                  <StructuredDataDisplay data={results.result.test_result} title="Test Result" />
-                  <div className="mt-4">
-                    <JSONViewer data={results.result.test_result} title="Test Result (JSON)" />
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Test Result</h3>
+                    <button
+                      onClick={() => setIsTestResultExpanded(!isTestResultExpanded)}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      {isTestResultExpanded ? 'Collapse' : 'Expand'}
+                    </button>
                   </div>
+                  {isTestResultExpanded && (
+                    <div className="p-6 space-y-4">
+                      <TestResultGrid data={results.result.test_result as Record<string, unknown>} />
+                      <JSONViewer data={results.result.test_result} title="Test Result (Raw JSON)" />
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Raw Responses */}
-              {results.result?.raw_responses ? (
-                Object.keys(results.result.raw_responses).length > 0 ? (
-                  <div>
-                    <JSONViewer data={results.result.raw_responses} title="Raw Responses" />
+              {results.result?.raw_responses && Object.keys(results.result.raw_responses).length > 0 ? (
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Raw Responses</h3>
+                    <button
+                      onClick={() => setIsRawResponsesExpanded(!isRawResponsesExpanded)}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      {isRawResponsesExpanded ? 'Collapse' : 'Expand'}
+                    </button>
                   </div>
-                ) : (
-                  <div className="bg-white rounded-lg shadow p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Raw Responses</h3>
-                    <p className="text-sm text-gray-500">No raw responses available</p>
-                  </div>
-                )
+                  {isRawResponsesExpanded && (
+                    <div className="p-6 space-y-4">
+                      <RawResponsesTable data={results.result.raw_responses as Record<string, Array<{ value: number; questionId: string }>>} />
+                      <JSONViewer data={results.result.raw_responses} title="Raw Responses (Raw JSON)" />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="bg-white rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Raw Responses</h3>

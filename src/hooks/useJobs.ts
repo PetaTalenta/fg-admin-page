@@ -15,7 +15,7 @@ export const useJobs = (filters: JobFilters = {}) => {
   if (filters.limit) queryParams.append('limit', filters.limit.toString());
   if (filters.status) queryParams.append('status', filters.status);
   if (filters.user_id) queryParams.append('user_id', filters.user_id);
-  if (filters.assessment_name) queryParams.append('assessment_name', filters.assessment_name);
+  if (filters.search) queryParams.append('search', filters.search);
   if (filters.date_from) queryParams.append('date_from', filters.date_from);
   if (filters.date_to) queryParams.append('date_to', filters.date_to);
   if (filters.sort_by) queryParams.append('sort_by', filters.sort_by);

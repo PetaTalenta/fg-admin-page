@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useJobStats } from '@/hooks/useJobStats';
 import { useJobs } from '@/hooks/useJobs';
@@ -31,6 +31,20 @@ export default function JobsPage() {
     sort_order: 'DESC',
   });
 
+  const [dateFrom, setDateFrom] = useState<string>('');
+  const [dateTo, setDateTo] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      date_from: dateFrom || undefined,
+      date_to: dateTo || undefined,
+      search: searchTerm || undefined,
+      page: 1,
+    }));
+  }, [dateFrom, dateTo, searchTerm]);
+
   const { data: stats, isLoading: statsLoading } = useJobStats();
   const { data: jobsData, isLoading: jobsLoading } = useJobs(filters);
 
@@ -44,6 +58,20 @@ export default function JobsPage() {
 
   const handlePageChange = (page: number) => {
     setFilters(prev => ({ ...prev, page }));
+  };
+
+  const handleClearFilters = () => {
+    setDateFrom('');
+    setDateTo('');
+    setSearchTerm('');
+    setFilters(prev => ({
+      ...prev,
+      status: undefined,
+      date_from: undefined,
+      date_to: undefined,
+      search: undefined,
+      page: 1,
+    }));
   };
 
   return (
@@ -86,30 +114,81 @@ export default function JobsPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => handleStatusFilter('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              !filters.status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All
-          </button>
-          {(['queue', 'processing', 'completed', 'failed', 'cancelled'] as const).map(status => (
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex flex-wrap gap-2">
             <button
-              key={status}
-              onClick={() => handleStatusFilter(status)}
+              onClick={() => handleStatusFilter('all')}
               className={`px-4 py-2 rounded-lg font-medium transition ${
-                filters.status === status
+                !filters.status
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {statusLabels[status]}
+              All
             </button>
-          ))}
+            {(['queue', 'processing', 'completed', 'failed', 'cancelled'] as const).map(status => (
+              <button
+                key={status}
+                onClick={() => handleStatusFilter(status)}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  filters.status === status
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {statusLabels[status]}
+              </button>
+            ))}
+          </div>
+          
+          <div className="flex gap-2 items-end">
+            <div>
+              <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+                Search (Email/Username/Assessment)
+              </label>
+              <input
+                type="text"
+                id="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by email, username, or assessment..."
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[250px]"
+              />
+            </div>
+          </div>
+          
+          <div className="flex gap-2 items-end">
+            <div>
+              <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700 mb-1">
+                From Date
+              </label>
+              <input
+                type="date"
+                id="dateFrom"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="dateTo" className="block text-sm font-medium text-gray-700 mb-1">
+                To Date
+              </label>
+              <input
+                type="date"
+                id="dateTo"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <button
+              onClick={handleClearFilters}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            >
+              Clear Filters
+            </button>
+          </div>
         </div>
       </div>
 
@@ -121,6 +200,7 @@ export default function JobsPage() {
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Job ID</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">User Email</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Username</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Assessment</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Created At</th>
@@ -132,7 +212,7 @@ export default function JobsPage() {
                 <>
                   {[...Array(10)].map((_, i) => (
                     <tr key={i} className="bg-gray-50">
-                      <td colSpan={6} className="px-6 py-4 h-12 bg-gray-200 animate-pulse" />
+                      <td colSpan={7} className="px-6 py-4 h-12 bg-gray-200 animate-pulse" />
                     </tr>
                   ))}
                 </>
@@ -145,6 +225,7 @@ export default function JobsPage() {
                       </Link>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{job.user?.email}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{job.user?.username}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{job.assessment_name}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[job.status]}`}>
@@ -159,7 +240,7 @@ export default function JobsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                     No jobs found
                   </td>
                 </tr>

@@ -101,6 +101,7 @@ export interface JobFilters {
   status?: JobStatus;
   user_id?: string;
   assessment_name?: string;
+  search?: string;
   date_from?: string;
   date_to?: string;
   sort_by?: 'created_at' | 'updated_at' | 'completed_at' | 'status' | 'priority';
