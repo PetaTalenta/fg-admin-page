@@ -89,14 +89,32 @@ export interface ChatbotStats {
   };
   performance: {
     avgResponseTimeMs: number;
+    avgResponseTimeSeconds?: string;
   };
   tokenUsage: {
+    totalPromptTokens?: number;
+    totalCompletionTokens?: number;
     totalTokens: number;
+    totalCost?: number;
   };
   modelUsage: Array<{
     model: string;
     count: number;
     totalTokens: number;
+    avgProcessingTime?: number;
+  }>;
+  statusBreakdown?: {
+    active: number;
+    archived?: number;
+    deleted?: number;
+  };
+  dailyMetrics?: Array<{
+    date: string;
+    conversations: string;
+  }>;
+  dailyMessages?: Array<{
+    date: string;
+    messages: string;
   }>;
 }
 
@@ -106,6 +124,7 @@ export interface ModelUsage {
   totalTokens: number;
   avgProcessingTimeMs: number;
   isFreeModel: boolean;
+  lastUsed?: string;
 }
 
 export interface ModelStats {
