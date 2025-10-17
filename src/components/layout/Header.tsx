@@ -1,6 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -8,6 +10,11 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { user, logout, isLoading } = useAuth();
+  const channels = useMemo(() => ['jobs', 'system', 'alerts'], []);
+  const { isConnected, connect } = useWebSocket({
+    autoConnect: false, // Temporarily disabled
+    channels
+  });
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
@@ -26,8 +33,24 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <h2 className="text-lg font-semibold text-gray-900">Admin Dashboard</h2>
       </div>
 
-      {/* Right side - User info and actions */}
+      {/* Right side - WebSocket status, User info and actions */}
       <div className="flex items-center space-x-4">
+        {/* WebSocket Status */}
+        <div className="flex items-center space-x-2">
+          <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <span className="hidden sm:block text-xs font-medium text-gray-600">
+            {isConnected ? 'Connected' : 'Disconnected'}
+          </span>
+          {!isConnected && (
+            <button
+              onClick={connect}
+              className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
+            >
+              Retry
+            </button>
+          )}
+        </div>
+
         {/* User info */}
         {user && (
           <div className="hidden sm:block">

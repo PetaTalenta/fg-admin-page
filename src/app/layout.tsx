@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import Providers from '@/lib/providers'
+import { ToastContainer } from '@/components/common/Toast'
 
 export const metadata: Metadata = {
   title: 'FutureGuide Admin Dashboard',
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+          <ToastContainer />
         </Providers>
       </body>
     </html>

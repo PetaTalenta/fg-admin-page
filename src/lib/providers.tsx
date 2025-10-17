@@ -1,8 +1,10 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthProvider } from './auth-context';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { trackPageLoad } from './performance';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -10,21 +12,32 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
-            refetchOnWindowFocus: true,
-            retry: 3,
+            staleTime: 5 * 60 * 1000, // 5 minutes - data considered fresh
+            gcTime: 10 * 60 * 1000, // 10 minutes - keep data in cache
+            refetchOnWindowFocus: true, // Refetch when window regains focus
+            refetchOnReconnect: true, // Refetch when reconnecting
+            retry: 3, // Retry failed requests 3 times
+            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+          },
+          mutations: {
+            retry: 1, // Retry mutations once
+            retryDelay: 1000,
           },
         },
       })
   );
 
+  // Track page load performance
+  useEffect(() => {
+    trackPageLoad();
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
