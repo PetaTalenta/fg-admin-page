@@ -11,11 +11,22 @@ export interface ProviderData {
   last_sign_in_time?: string;
 }
 
+// School Types
+export interface School {
+  id: number;
+  name: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  created_at: string;
+}
+
 export interface UserProfile {
   full_name?: string;
   date_of_birth?: string;
   gender?: string;
   school_id?: number;
+  school?: School;
   phone?: string;
   avatar_url?: string;
 }
@@ -112,5 +123,6 @@ export interface UserFilters {
   user_type?: UserType;
   is_active?: boolean;
   auth_provider?: AuthProvider;
+  school_id?: number;
 }
 

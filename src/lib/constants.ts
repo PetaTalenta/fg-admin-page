@@ -25,13 +25,17 @@ export const API_ENDPOINTS = {
   JOB_DETAIL: (id: string) => `/admin/jobs/${id}`,
   JOB_RESULTS: (id: string) => `/admin/jobs/${id}/results`,
   
+  // Schools
+  SCHOOLS: '/admin/schools',
+  SCHOOL_DETAIL: (id: number) => `/admin/schools/${id}`,
+
   // Chatbot
   CHATBOT_STATS: '/admin/chatbot/stats',
   CHATBOT_MODELS: '/admin/chatbot/models',
   CONVERSATIONS: '/admin/conversations',
   CONVERSATION_DETAIL: (id: string) => `/admin/conversations/${id}`,
   CONVERSATION_CHATS: (id: string) => `/admin/conversations/${id}/chats`,
-  
+
   // System
   SYSTEM_METRICS: '/admin/system/metrics',
 } as const;

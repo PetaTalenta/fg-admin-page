@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useUsers } from '@/hooks/useUsers';
+import { useSchools } from '@/hooks/useSchools';
 import type { UserFilters, UserType } from '@/types/user';
 
 // Loading Skeleton Component
@@ -55,11 +56,13 @@ export default function UsersPage() {
     user_type: undefined,
     is_active: undefined,
     auth_provider: undefined,
+    school_id: undefined,
   });
 
   const [searchInput, setSearchInput] = useState('');
 
   const { data, isLoading, error } = useUsers(filters);
+  const { data: schoolsData } = useSchools({ page: 1, limit: 100 });
 
   // Debounced search
   const handleSearch = useMemo(() => {
@@ -95,6 +98,7 @@ export default function UsersPage() {
       user_type: undefined,
       is_active: undefined,
       auth_provider: undefined,
+      school_id: undefined,
     });
   };
 
@@ -109,7 +113,7 @@ export default function UsersPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow mb-6 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Search */}
           <div>
             <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
@@ -177,6 +181,26 @@ export default function UsersPage() {
               <option value="firebase">Firebase</option>
             </select>
           </div>
+
+          {/* School Filter */}
+          <div>
+            <label htmlFor="school_id" className="block text-sm font-medium text-gray-700 mb-1">
+              School
+            </label>
+            <select
+              id="school_id"
+              value={filters.school_id || ''}
+              onChange={(e) => handleFilterChange('school_id', e.target.value ? parseInt(e.target.value) : undefined)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Schools</option>
+              {schoolsData?.schools.map((school) => (
+                <option key={school.id} value={school.id}>
+                  {school.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Clear Filters Button */}
@@ -218,6 +242,9 @@ export default function UsersPage() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  School
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Token Balance
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -231,7 +258,7 @@ export default function UsersPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7}>
+                  <td colSpan={8}>
                     <TableSkeleton />
                   </td>
                 </tr>
@@ -256,6 +283,9 @@ export default function UsersPage() {
                       <StatusBadge isActive={user.is_active} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {user.profile?.school?.name || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {user.token_balance.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -268,7 +298,7 @@ export default function UsersPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-500">
                     No users found
                   </td>
                 </tr>

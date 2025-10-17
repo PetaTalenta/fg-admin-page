@@ -170,7 +170,7 @@ export default function UserDetailPage() {
           {/* User Info Card */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">User Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
                 {isEditing ? (
@@ -260,6 +260,45 @@ export default function UserDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* School Info Card */}
+          {user.profile?.school && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">School Name</label>
+                  <p className="text-sm text-gray-900">{user.profile.school.name}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">School ID</label>
+                  <p className="text-sm text-gray-900">{user.profile.school.id}</p>
+                </div>
+                {user.profile.school.address && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    <p className="text-sm text-gray-900">{user.profile.school.address}</p>
+                  </div>
+                )}
+                {user.profile.school.city && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <p className="text-sm text-gray-900">{user.profile.school.city}</p>
+                  </div>
+                )}
+                {user.profile.school.province && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Province</label>
+                    <p className="text-sm text-gray-900">{user.profile.school.province}</p>
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Created At</label>
+                  <p className="text-sm text-gray-900">{new Date(user.profile.school.created_at).toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Statistics Card */}
           <div className="bg-white rounded-lg shadow p-6">
