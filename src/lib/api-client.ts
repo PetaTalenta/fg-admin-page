@@ -26,16 +26,18 @@ apiClient.interceptors.request.use(
       }
     }
     
-    // Log API requests for debugging
-    console.log('API Request:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      params: config.params,
-      headers: {
-        ...config.headers,
-        Authorization: config.headers.Authorization ? '[REDACTED]' : undefined
-      }
-    });
+    // Log API requests for debugging (development only)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('API Request:', {
+        method: config.method?.toUpperCase(),
+        url: config.url,
+        params: config.params,
+        headers: {
+          ...config.headers,
+          Authorization: config.headers.Authorization ? '[REDACTED]' : undefined
+        }
+      });
+    }
     
     return config;
   },

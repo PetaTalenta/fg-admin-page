@@ -6,6 +6,11 @@ import { ToastContainer } from '@/components/common/Toast'
 export const metadata: Metadata = {
   title: 'FutureGuide Admin Dashboard',
   description: 'Admin dashboard for managing users, jobs, and chatbot monitoring',
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
 }
 
 export default function RootLayout({

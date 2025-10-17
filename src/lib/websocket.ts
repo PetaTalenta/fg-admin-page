@@ -19,7 +19,9 @@ export const initializeWebSocket = (): Socket => {
   }
 
   const token = Cookies.get('admin_token');
-  console.log('[WebSocket] Initializing connection, token present:', !!token);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[WebSocket] Initializing connection, token present:', !!token);
+  }
 
   socket = io(WS_URL, {
     path: '/admin/socket.io',
@@ -36,33 +38,49 @@ export const initializeWebSocket = (): Socket => {
 
   // Connection event handlers
   socket.on('connect', () => {
-    console.log('[WebSocket] Connected to server');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[WebSocket] Connected to server');
+    }
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('[WebSocket] Disconnected:', reason);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[WebSocket] Disconnected:', reason);
+    }
   });
 
   socket.on('connect_error', (error) => {
-    console.error('[WebSocket] Connection error:', error.message);
-    console.error('[WebSocket] This is expected if WebSocket server is not running. App will work without real-time updates.');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[WebSocket] Connection error:', error.message);
+      console.error('[WebSocket] This is expected if WebSocket server is not running. App will work without real-time updates.');
+    } else {
+      console.warn('[WebSocket] Connection failed - real-time updates disabled');
+    }
   });
 
   socket.on('error', (error) => {
-    console.error('[WebSocket] Error:', error);
-    console.error('[WebSocket] WebSocket functionality will be disabled.');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[WebSocket] Error:', error);
+      console.error('[WebSocket] WebSocket functionality will be disabled.');
+    }
   });
 
   socket.on('reconnect', (attemptNumber) => {
-    console.log(`[WebSocket] Reconnected after ${attemptNumber} attempts`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[WebSocket] Reconnected after ${attemptNumber} attempts`);
+    }
   });
 
   socket.on('reconnect_error', (error) => {
-    console.error('[WebSocket] Reconnection error:', error.message);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[WebSocket] Reconnection error:', error.message);
+    }
   });
 
   socket.on('reconnect_failed', () => {
-    console.error('[WebSocket] Reconnection failed after all attempts');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[WebSocket] Reconnection failed after all attempts');
+    }
   });
 
   return socket;
@@ -85,13 +103,12 @@ export const disconnectWebSocket = (): void => {
   }
 };
 
-/**
- * Subscribe to a channel
- */
 export const subscribe = (channel: string): void => {
   if (socket && socket.connected) {
     socket.emit(`subscribe:${channel}`);
-    console.log(`[WebSocket] Subscribed to ${channel}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[WebSocket] Subscribed to ${channel}`);
+    }
   }
 };
 
@@ -101,7 +118,9 @@ export const subscribe = (channel: string): void => {
 export const unsubscribe = (channel: string): void => {
   if (socket && socket.connected) {
     socket.emit(`unsubscribe:${channel}`);
-    console.log(`[WebSocket] Unsubscribed from ${channel}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[WebSocket] Unsubscribed from ${channel}`);
+    }
   }
 };
 

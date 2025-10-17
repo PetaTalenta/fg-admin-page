@@ -37,7 +37,9 @@ export const useWebSocket = (
 
   const connect = useCallback(() => {
     if (!wsEnabled) {
-      console.log('[WebSocket] WebSocket disabled via environment variable');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[WebSocket] WebSocket disabled via environment variable');
+      }
       return;
     }
 
