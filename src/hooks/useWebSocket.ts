@@ -94,7 +94,7 @@ export const useWebSocket = (
         setConnectionAttempted(false);
       }
     };
-  }, [autoConnect, connectionAttempted, wsEnabled]);
+  }, [autoConnect, connectionAttempted, wsEnabled, connect, disconnect]);
 
   return {
     socket,
