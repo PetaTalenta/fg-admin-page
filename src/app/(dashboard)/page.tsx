@@ -187,9 +187,20 @@ export default function DashboardPage() {
           color="green"
           isLoading={statsLoading}
         />
-      </div>
 
-      {/* Charts Section */}
+        {/* Total Models */}
+        <StatsCard
+          title="Total Models"
+          value={topModels?.summary.totalModels ?? '-'}
+          icon={
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          }
+          color="purple"
+          isLoading={topModelsLoading}
+        />
+      </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <JobTrendChart data={jobTrend ?? []} isLoading={jobTrendLoading} />
         <UserGrowthChart data={userGrowth ?? []} isLoading={userGrowthLoading} />
