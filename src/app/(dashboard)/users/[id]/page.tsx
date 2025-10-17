@@ -8,6 +8,7 @@ import { useUpdateUser } from '@/hooks/useUpdateUser';
 import { useTokenHistory, useUpdateToken } from '@/hooks/useTokenManagement';
 import { useUserJobs } from '@/hooks/useUserJobs';
 import { useUserConversations } from '@/hooks/useUserConversations';
+import { useSchools } from '@/hooks/useSchools';
 import type { UpdateUserRequest, UpdateTokenRequest, UserType, FederationStatus } from '@/types/user';
 
 // Loading Skeleton
@@ -47,6 +48,7 @@ export default function UserDetailPage() {
   const { data: tokenData } = useTokenHistory(userId);
   const { data: jobsData } = useUserJobs(userId, { page: 1, limit: 10 });
   const { data: conversationsData } = useUserConversations(userId, { page: 1, limit: 10 });
+  const { data: schoolsData } = useSchools({ page: 1, limit: 100 });
 
   const updateUserMutation = useUpdateUser();
   const updateTokenMutation = useUpdateToken();
@@ -262,13 +264,34 @@ export default function UserDetailPage() {
           </div>
 
           {/* School Info Card */}
-          {user.profile?.school && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
+            {user.profile?.school ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">School Name</label>
-                  <p className="text-sm text-gray-900">{user.profile.school.name}</p>
+                  {isEditing ? (
+                    <select
+                      value={editForm.profile?.school_id || user.profile.school_id || ''}
+                      onChange={(e) => setEditForm({
+                        ...editForm,
+                        profile: {
+                          ...editForm.profile,
+                          school_id: parseInt(e.target.value),
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select a school</option>
+                      {schoolsData?.schools.map((school) => (
+                        <option key={school.id} value={school.id}>
+                          {school.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="text-sm text-gray-900">{user.profile.school.name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">School ID</label>
@@ -297,8 +320,10 @@ export default function UserDetailPage() {
                   <p className="text-sm text-gray-900">{new Date(user.profile.school.created_at).toLocaleString()}</p>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-sm text-gray-600">No school assigned</p>
+            )}
+          </div>
 
           {/* Statistics Card */}
           <div className="bg-white rounded-lg shadow p-6">

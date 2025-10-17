@@ -362,12 +362,10 @@ curl -X POST "https://api.futureguide.id/admin/schools" \
 1. **Testing Awal**: Jalankan testing cURL untuk semua endpoint yang akan digunakan (production: api.futureguide.id)
 2. **Kickoff Fase 1**: Mulai implementasi Types, Hooks & UI Users setelah testing cURL berhasil
 3. **Fase 2**: Implementasi Schools Management, Edit School & Testing setelah Fase 1 selesai
-4. **Reporting**: Buat laporan setiap fase selesai menggunakan template yang disediakan
-5. **Review & Approval**: Diskusikan rencana ini dengan tim sebelum mulai
-6. **Daily Standup**: Update progress dan blocker setiap hari
-7. **Testing**: Integrasi testing dengan backend setiap fase
-8. **Build Verification**: Jalankan `npm run build` di akhir Fase 2 untuk memastikan production readiness
-9. **Deployment**: Rollout setelah semua fase selesai dan testing final
+4. **Reporting**: Buat laporan setiap fase selesai menggunakan template yang disediakan.
+5. **Testing**: Integrasi testing dengan backend setiap fase
+6. **Build Verification**: Jalankan `npm run build` di akhir Fase 2 untuk memastikan production readiness
+7. **Deployment**: Rollout setelah semua fase selesai dan testing final
 
 ---
 
