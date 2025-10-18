@@ -10,7 +10,9 @@
 
 The Admin Service provides comprehensive monitoring and management capabilities for the FutureGuide platform. This document details all available API endpoints, request/response formats, and authentication requirements.
 
-**Base URL**:`https://api.futureguide.id/api`
+**Base URL**: `http://localhost:3007` (internal) or `https://api.futureguide.id/api` and `http://localhost:3000/api` (via API Gateway)
+
+**Note**: The `api/` prefix is handled by the API gateway. The admin-service implements endpoints under `admin/`.
 
 ---
 
@@ -675,6 +677,244 @@ Get user's chat conversations with pagination.
 }
 ```
 
+## Phase 2.5 Endpoints - School Management Module
+
+### School List & Search
+
+#### GET /admin/schools
+
+Get paginated list of schools with search and sorting.
+
+**Authentication**: Required (Bearer token)
+**Rate Limit**: 100 requests per 15 minutes per IP
+
+**Query Parameters**:
+- `page` (integer, optional): Page number (default: 1)
+- `limit` (integer, optional): Items per page (default: 20, max: 100)
+- `search` (string, optional): Search by name, city, or province
+- `sort_by` (string, optional): Sort field (name, city, province, created_at) (default: created_at)
+- `sort_order` (string, optional): Sort order (ASC, DESC) (default: DESC)
+
+**Success Response** (200):
+```json
+{
+  "success": true,
+  "message": "Schools retrieved successfully",
+  "data": {
+    "schools": [
+      {
+        "id": 1,
+        "name": "SMA Dummy 1",
+        "address": "Jl. Dummy 1",
+        "city": "Jakarta",
+        "province": "DKI Jakarta",
+        "created_at": "2025-10-17T07:29:34.371Z"
+      },
+      {
+        "id": 2,
+        "name": "SMA Dummy 2",
+        "address": "Jl. Dummy 2",
+        "city": "Bandung",
+        "province": "Jawa Barat",
+        "created_at": "2025-10-17T07:29:34.371Z"
+      }
+    ],
+    "pagination": {
+      "total": 6,
+      "page": 1,
+      "limit": 3,
+      "totalPages": 2
+    }
+  },
+  "timestamp": "2025-10-18T01:22:02.165Z"
+}
+```
+
+---
+
+### School Details
+
+#### GET /admin/schools/:id
+
+Get detailed information about a specific school including user count.
+
+**Authentication**: Required (Bearer token)
+**Rate Limit**: 100 requests per 15 minutes per IP
+
+**Path Parameters**:
+- `id` (integer): School ID
+
+**Success Response** (200):
+```json
+{
+  "success": true,
+  "message": "School details retrieved successfully",
+  "data": {
+    "school": {
+      "id": 1,
+      "name": "SMA Dummy 1",
+      "address": "Jl. Dummy 1",
+      "city": "Jakarta",
+      "province": "DKI Jakarta",
+      "created_at": "2025-10-17T07:29:34.371Z"
+    },
+    "userCount": 1
+  },
+  "timestamp": "2025-10-18T01:22:17.998Z"
+}
+```
+
+**Error Response** (404):
+```json
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "School not found"
+  }
+}
+```
+
+---
+
+### School Creation
+
+#### POST /admin/schools
+
+Create a new school.
+
+**Authentication**: Required (Bearer token)
+**Rate Limit**: 100 requests per 15 minutes per IP
+
+**Request Body**:
+```json
+{
+  "name": "SMA Test Create",
+  "address": "Jl. Create No. 456",
+  "city": "Malang",
+  "province": "Jawa Timur"
+}
+```
+
+**Success Response** (201):
+```json
+{
+  "success": true,
+  "message": "School created successfully",
+  "data": {
+    "id": 8,
+    "name": "SMA Test Create",
+    "address": "Jl. Create No. 456",
+    "city": "Malang",
+    "province": "Jawa Timur",
+    "created_at": "2025-10-18T01:22:10.829Z"
+  },
+  "timestamp": "2025-10-18T01:22:10.834Z"
+}
+```
+
+---
+
+### School Update
+
+#### PUT /admin/schools/:id
+
+Update school information (partial update supported).
+
+**Authentication**: Required (Bearer token)
+**Rate Limit**: 100 requests per 15 minutes per IP
+
+**Path Parameters**:
+- `id` (integer): School ID
+
+**Request Body**:
+```json
+{
+  "name": "SMA Test Updated",
+  "city": "Malang Raya"
+}
+```
+
+**Success Response** (200):
+```json
+{
+  "success": true,
+  "message": "School updated successfully",
+  "data": {
+    "id": 8,
+    "name": "SMA Test Updated",
+    "address": "Jl. Create No. 456",
+    "city": "Malang Raya",
+    "province": "Jawa Timur",
+    "created_at": "2025-10-18T01:22:10.829Z"
+  },
+  "timestamp": "2025-10-18T01:22:25.381Z"
+}
+```
+
+**Error Response** (404):
+```json
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "School not found"
+  }
+}
+```
+
+---
+
+### School Deletion
+
+#### DELETE /admin/schools/:id
+
+Delete a school (only if no users are associated with it).
+
+**Authentication**: Required (Bearer token)
+**Rate Limit**: 100 requests per 15 minutes per IP
+
+**Path Parameters**:
+- `id` (integer): School ID
+
+**Success Response** (200):
+```json
+{
+  "success": true,
+  "message": "School deleted successfully",
+  "data": {
+    "message": "School deleted successfully"
+  },
+  "timestamp": "2025-10-18T01:22:33.963Z"
+}
+```
+
+**Error Responses**:
+
+- **404 Not Found**: School not found
+```json
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "School not found"
+  }
+}
+```
+
+- **400 Bad Request**: School has associated users
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Cannot delete school. 1 user(s) are associated with this school."
+  }
+}
+```
+
+---
+
 ## Phase 3 Endpoints
 
 ### Job Monitoring Endpoints
@@ -882,7 +1122,7 @@ Get complete analysis results for a specific job.
 
 Connect to WebSocket server for real-time job monitoring.
 
-**Endpoint**: `ws://api.futureguide.id/api/admin/socket.io` (or via API Gateway)
+**Endpoint**: `ws://admin-service:3007/admin/socket.io` (or via API Gateway)
 
 **Authentication**: Required via handshake
 
@@ -890,7 +1130,7 @@ Connect to WebSocket server for real-time job monitoring.
 ```javascript
 const io = require('socket.io-client');
 
-const socket = io('http://api.futureguide.id/api', {
+const socket = io('http://localhost:3007', {
   path: '/admin/socket.io',
   auth: {
     token: 'YOUR_JWT_TOKEN'

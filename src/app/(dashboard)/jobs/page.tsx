@@ -33,17 +33,21 @@ export default function JobsPage() {
 
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [userUsername, setUserUsername] = useState<string>('');
+  const [assessmentName, setAssessmentName] = useState<string>('');
 
   useEffect(() => {
     setFilters(prev => ({
       ...prev,
+      user_email: userEmail || undefined,
+      user_username: userUsername || undefined,
+      assessment_name: assessmentName || undefined,
       date_from: dateFrom || undefined,
       date_to: dateTo || undefined,
-      search: searchTerm || undefined,
       page: 1,
     }));
-  }, [dateFrom, dateTo, searchTerm]);
+  }, [userEmail, userUsername, assessmentName, dateFrom, dateTo]);
 
   const { data: stats, isLoading: statsLoading } = useJobStats();
   const { data: jobsData, isLoading: jobsLoading } = useJobs(filters);
@@ -61,15 +65,19 @@ export default function JobsPage() {
   };
 
   const handleClearFilters = () => {
+    setUserEmail('');
+    setUserUsername('');
+    setAssessmentName('');
     setDateFrom('');
     setDateTo('');
-    setSearchTerm('');
     setFilters(prev => ({
       ...prev,
       status: undefined,
+      user_email: undefined,
+      user_username: undefined,
+      assessment_name: undefined,
       date_from: undefined,
       date_to: undefined,
-      search: undefined,
       page: 1,
     }));
   };
@@ -143,16 +151,42 @@ export default function JobsPage() {
           
           <div className="flex gap-2 items-end">
             <div>
-              <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-                Search (Email/Username/Assessment)
+              <label htmlFor="userEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                User Email
               </label>
               <input
                 type="text"
-                id="search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by email, username, or assessment..."
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[250px]"
+                id="userEmail"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                placeholder="Filter by user email..."
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[200px]"
+              />
+            </div>
+            <div>
+              <label htmlFor="userUsername" className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
+              <input
+                type="text"
+                id="userUsername"
+                value={userUsername}
+                onChange={(e) => setUserUsername(e.target.value)}
+                placeholder="Filter by username..."
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[150px]"
+              />
+            </div>
+            <div>
+              <label htmlFor="assessmentName" className="block text-sm font-medium text-gray-700 mb-1">
+                Assessment Name
+              </label>
+              <input
+                type="text"
+                id="assessmentName"
+                value={assessmentName}
+                onChange={(e) => setAssessmentName(e.target.value)}
+                placeholder="Filter by assessment..."
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[200px]"
               />
             </div>
           </div>
