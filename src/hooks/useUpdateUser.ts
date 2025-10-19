@@ -11,10 +11,12 @@ export const useUpdateUser = () => {
       return response.data;
     },
     onSuccess: (data, variables) => {
-      // Invalidate user detail query
+      // Invalidate user detail query to refetch with updated school data
       queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
       // Invalidate users list query
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      // Invalidate schools list to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['schools'] });
     },
   });
 };

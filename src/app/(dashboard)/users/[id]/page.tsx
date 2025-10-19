@@ -270,7 +270,8 @@ export default function UserDetailPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
             {(() => {
-              const assignedSchool = schoolsData?.schools.find(school => school.id === user.profile?.school_id);
+              // Use school data from user.profile.school (from API response)
+              const assignedSchool = user.profile?.school;
               return assignedSchool ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
