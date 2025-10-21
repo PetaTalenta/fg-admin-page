@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useUserDetail } from '@/hooks/useUserDetail';
 import { useUpdateUser } from '@/hooks/useUpdateUser';
@@ -36,6 +37,7 @@ const StatusBadge = ({ isActive }: { isActive: boolean }) => (
 export default function UserDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const userId = params.id as string;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -43,8 +45,9 @@ export default function UserDetailPage() {
   const [tokenForm, setTokenForm] = useState<UpdateTokenRequest>({ amount: 0, reason: '' });
   const [showTokenForm, setShowTokenForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'info' | 'tokens' | 'jobs' | 'conversations'>('info');
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
 
-  const { data: userDetail, isLoading, error } = useUserDetail(userId);
+  const { data: userDetail, isLoading, error, refetch } = useUserDetail(userId);
   const { data: tokenData } = useTokenHistory(userId);
   const { data: jobsData } = useUserJobs(userId, { page: 1, limit: 10 });
   const { data: conversationsData } = useUserConversations(userId, { page: 1, limit: 10 });
@@ -52,6 +55,31 @@ export default function UserDetailPage() {
 
   const updateUserMutation = useUpdateUser();
   const updateTokenMutation = useUpdateToken();
+
+  // Debug logging - log user data whenever it changes
+  useEffect(() => {
+    if (userDetail) {
+      console.log('=== USER DETAIL DATA ===');
+      console.log('Full userDetail:', userDetail);
+      console.log('User object:', userDetail.user);
+      console.log('Profile object:', userDetail.user.profile);
+      console.log('School object:', userDetail.user.profile?.school);
+      console.log('School ID:', userDetail.user.profile?.school_id);
+      console.log('School Name:', userDetail.user.profile?.school?.name);
+      console.log('========================');
+    }
+  }, [userDetail]);
+
+  // Force refresh function - invalidate cache and refetch
+  const handleForceRefresh = async () => {
+    console.log('🔄 Force refreshing user data...');
+    // Invalidate all related queries
+    await queryClient.invalidateQueries({ queryKey: ['user', userId] });
+    await queryClient.invalidateQueries({ queryKey: ['schools'] });
+    // Refetch
+    await refetch();
+    alert('Data refreshed! Check console for debug info.');
+  };
 
   const handleEditToggle = () => {
     if (!isEditing && userDetail) {
@@ -123,6 +151,24 @@ export default function UserDetailPage() {
           <p className="mt-1 text-sm text-gray-500">{user.email}</p>
         </div>
         <div className="flex gap-2">
+          {/* Force Refresh Button */}
+          <button
+            onClick={handleForceRefresh}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            title="Force refresh data and clear cache"
+          >
+            🔄 Refresh
+          </button>
+          {/* Debug Panel Toggle */}
+          {process.env.NODE_ENV !== 'production' && (
+            <button
+              onClick={() => setShowDebugPanel(!showDebugPanel)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              title="Toggle debug panel"
+            >
+              🐛 Debug
+            </button>
+          )}
           {!isEditing ? (
             <button
               onClick={handleEditToggle}
@@ -149,6 +195,49 @@ export default function UserDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Debug Panel - Development Only */}
+      {process.env.NODE_ENV !== 'production' && showDebugPanel && (
+        <div className="mb-6 bg-gray-900 text-white rounded-lg p-4 font-mono text-xs overflow-auto max-h-96">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-bold text-yellow-400">🐛 DEBUG PANEL</h3>
+            <button
+              onClick={() => setShowDebugPanel(false)}
+              className="text-gray-400 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-2">
+            <div>
+              <span className="text-green-400">User ID:</span> {userId}
+            </div>
+            <div>
+              <span className="text-green-400">Has Profile:</span> {user.profile ? 'YES ✅' : 'NO ❌'}
+            </div>
+            <div>
+              <span className="text-green-400">Profile School ID:</span> {user.profile?.school_id || 'null'}
+            </div>
+            <div>
+              <span className="text-green-400">Has School Object:</span> {user.profile?.school ? 'YES ✅' : 'NO ❌'}
+            </div>
+            {user.profile?.school && (
+              <>
+                <div>
+                  <span className="text-green-400">School ID:</span> {user.profile.school.id}
+                </div>
+                <div>
+                  <span className="text-green-400">School Name:</span> {user.profile.school.name}
+                </div>
+              </>
+            )}
+            <div className="mt-4 pt-4 border-t border-gray-700">
+              <span className="text-yellow-400">Full User Object:</span>
+              <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(user, null, 2)}</pre>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
@@ -268,10 +357,27 @@ export default function UserDetailPage() {
 
           {/* School Info Card */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">School Information</h2>
+              {/* Status Indicator */}
+              {user.profile?.school ? (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ School Assigned
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  ⚠ No School
+                </span>
+              )}
+            </div>
             {(() => {
               // Use school data from user.profile.school (from API response)
               const assignedSchool = user.profile?.school;
+
+              // Debug log for this specific section
+              console.log('School Info Card - assignedSchool:', assignedSchool);
+              console.log('School Info Card - user.profile:', user.profile);
+
               return assignedSchool ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

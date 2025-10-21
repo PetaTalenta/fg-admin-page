@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useUsers } from '@/hooks/useUsers';
 import { useSchools } from '@/hooks/useSchools';
@@ -49,6 +50,7 @@ const UserTypeBadge = ({ userType }: { userType: UserType }) => {
 };
 
 export default function UsersPage() {
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<UserFilters>({
     page: 1,
     limit: 20,
@@ -60,9 +62,44 @@ export default function UsersPage() {
   });
 
   const [searchInput, setSearchInput] = useState('');
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
 
-  const { data, isLoading, error } = useUsers(filters);
+  const { data, isLoading, error, refetch } = useUsers(filters);
   const { data: schoolsData } = useSchools({ page: 1, limit: 100 });
+
+  // Debug logging - log users data whenever it changes
+  useEffect(() => {
+    if (data?.users) {
+      console.log('=== USERS LIST DATA ===');
+      console.log('Total users:', data.users.length);
+      console.log('Users with school:', data.users.filter(u => u.profile?.school).length);
+      console.log('Users without school:', data.users.filter(u => !u.profile?.school).length);
+
+      // Log first 3 users for inspection
+      data.users.slice(0, 3).forEach((user, idx) => {
+        console.log(`User ${idx + 1}:`, {
+          username: user.username,
+          email: user.email,
+          hasProfile: !!user.profile,
+          schoolId: user.profile?.school_id,
+          hasSchoolObject: !!user.profile?.school,
+          schoolName: user.profile?.school?.name,
+        });
+      });
+      console.log('========================');
+    }
+  }, [data]);
+
+  // Force refresh function - invalidate cache and refetch
+  const handleForceRefresh = async () => {
+    console.log('🔄 Force refreshing users list...');
+    // Invalidate all related queries
+    await queryClient.invalidateQueries({ queryKey: ['users'] });
+    await queryClient.invalidateQueries({ queryKey: ['schools'] });
+    // Refetch
+    await refetch();
+    alert('Users list refreshed! Check console for debug info.');
+  };
 
   // Debounced search
   const handleSearch = useMemo(() => {
@@ -104,12 +141,78 @@ export default function UsersPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Manage users, view details, and update token balances
-        </p>
+      {/* Header with Actions */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage users, view details, and update token balances
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {/* Force Refresh Button */}
+          <button
+            onClick={handleForceRefresh}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            title="Force refresh users list and clear cache"
+          >
+            🔄 Refresh
+          </button>
+          {/* Debug Panel Toggle */}
+          {process.env.NODE_ENV !== 'production' && (
+            <button
+              onClick={() => setShowDebugPanel(!showDebugPanel)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              title="Toggle debug panel"
+            >
+              🐛 Debug
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Debug Panel - Development Only */}
+      {process.env.NODE_ENV !== 'production' && showDebugPanel && data?.users && (
+        <div className="mb-6 bg-gray-900 text-white rounded-lg p-4 font-mono text-xs overflow-auto max-h-96">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-bold text-yellow-400">🐛 DEBUG PANEL - USERS LIST</h3>
+            <button
+              onClick={() => setShowDebugPanel(false)}
+              className="text-gray-400 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-2">
+            <div>
+              <span className="text-green-400">Total Users:</span> {data.users.length}
+            </div>
+            <div>
+              <span className="text-green-400">Users with School:</span> {data.users.filter(u => u.profile?.school).length} ✅
+            </div>
+            <div>
+              <span className="text-green-400">Users without School:</span> {data.users.filter(u => !u.profile?.school).length} ❌
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-700">
+              <span className="text-yellow-400">Sample Users (First 5):</span>
+              <div className="mt-2 space-y-2">
+                {data.users.slice(0, 5).map((user, idx) => (
+                  <div key={user.id} className="text-xs border-l-2 border-blue-500 pl-2">
+                    <div><span className="text-blue-400">#{idx + 1}</span> {user.username}</div>
+                    <div className="text-gray-400">Email: {user.email}</div>
+                    <div>Profile: {user.profile ? '✅ YES' : '❌ NO'}</div>
+                    <div>School ID: {user.profile?.school_id || 'null'}</div>
+                    <div>School Object: {user.profile?.school ? '✅ YES' : '❌ NO'}</div>
+                    {user.profile?.school && (
+                      <div className="text-green-400">School: {user.profile.school.name} (ID: {user.profile.school.id})</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow mb-6 p-4">
@@ -263,28 +366,47 @@ export default function UsersPage() {
                   </td>
                 </tr>
               ) : data?.users && data.users.length > 0 ? (
-                data.users.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link href={`/users/${user.id}`} className="text-blue-600 hover:text-blue-800 font-medium">
-                        {user.username}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <UserTypeBadge userType={user.user_type} />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge isActive={user.is_active} />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.profile?.school?.name || '-'}
-                    </td>
+                data.users.map((user) => {
+                  // Debug log for each user in table
+                  const schoolInfo = user.profile?.school;
+                  if (process.env.NODE_ENV !== 'production') {
+                    console.log(`Table Row - ${user.username}:`, {
+                      hasProfile: !!user.profile,
+                      schoolId: user.profile?.school_id,
+                      hasSchoolObject: !!schoolInfo,
+                      schoolName: schoolInfo?.name,
+                    });
+                  }
+
+                  return (
+                    <tr
+                      key={user.id}
+                      className="hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Link href={`/users/${user.id}`} className="text-blue-600 hover:text-blue-800 font-medium">
+                          {user.username}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {user.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <UserTypeBadge userType={user.user_type} />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <StatusBadge isActive={user.is_active} />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {schoolInfo ? (
+                          <span className="inline-flex items-center">
+                            <span className="text-green-600 mr-1">✓</span>
+                            {schoolInfo.name}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {user.token_balance.toLocaleString()}
                     </td>
@@ -295,7 +417,8 @@ export default function UsersPage() {
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                   </tr>
-                ))
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-500">
